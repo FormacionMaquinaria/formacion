@@ -52,7 +52,7 @@ function render(){
  var hero='<div class="card hero">'+(m&&m.logo?'<img src="'+m.logo+'" alt="Logo de la institución">':'')+'<div><h1>Formación en maquinaria amarilla</h1>'+(m?'<p>'+EG.esc(m.institucion)+'</p>':'<p>Plataforma de formación técnica</p>')+'</div></div>';
  var f=EG.formacion();
  if(!EG.reg||!f){
-  app.innerHTML=hero+'<div class="card"><h2>Ingreso de aprendices</h2><p class="mute">Si ya te registraste en este dispositivo, ingresa con tu documento. Si es tu primera vez, haz tu registro.</p>'+EG.formHTML(null,'Ingresar a mi formación')+'</div>';
+  app.innerHTML=hero+'<div class="card"><h2>Ingreso de aprendices</h2><p class="mute">Si ya te registraste, ingresa con tu documento. Si es tu primera vez, haz tu registro con el código de grupo que te dio tu instructor.</p>'+EG.formHTML(null,'Ingresar a mi formación')+'</div>';
   EG.showF();return;
  }
  var apps=f.apps.map(function(id){var a=APPS[id];return a?'<a class="app" href="'+a.ruta+'"><b>'+a.nombre+'</b><span class="mute">'+a.desc+'</span></a>':'';}).join('');
