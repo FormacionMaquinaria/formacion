@@ -50,6 +50,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .mod .pg{grid-column:2 / 4;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
 .mod .pg i{display:block;height:100%;background:var(--ok)}
 .mod.cont{background:var(--yelsoft)}
+.mod.lock{opacity:.5;cursor:default}
+.mod.lock:hover{background:transparent}
 .mod.cont .n{align-self:stretch;width:6px;background:var(--yel);border-radius:3px;justify-self:center}
 .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 16px}
 .bar i{display:block;height:100%;background:var(--yel)}
@@ -169,8 +171,11 @@ var MODS=[{"id":"diag","title":"Diagnóstico de entrada","ic":"","intro":"Cinco 
 
 /* ---------- Inicio ---------- */
 function modPct(id){var r=S.scores[id];return r?r.p:null;}
-function avance(){var t=0,n=0;MODS.forEach(function(m){if(m.id==='diag')return;n++;var p=modPct(m.id);if(p!=null)t+=p;});return Math.round(t/n);}
-function hechos(){var n=0;MODS.forEach(function(m){if(m.id!=='diag'&&modPct(m.id)!=null)n++;});return n;}
+/* Temas habilitados por el instructor para el grupo (null = todos) */
+function hab(i){var f=EG.formacion();var t=f&&f.temas;return !t||t.indexOf(i+1)>=0;}
+function habN(){var n=0;MODS.forEach(function(m,i){if(m.id!=='diag'&&hab(i))n++;});return n;}
+function avance(){var t=0,n=0;MODS.forEach(function(m,i){if(m.id==='diag'||!hab(i))return;n++;var p=modPct(m.id);if(p!=null)t+=p;});return n?Math.round(t/n):0;}
+function hechos(){var n=0;MODS.forEach(function(m,i){if(m.id!=='diag'&&hab(i)&&modPct(m.id)!=null)n++;});return n;}
 function home(){
  MODE='';setView('home');
  var f=EG.formacion();
@@ -181,11 +186,12 @@ function home(){
  var g='',cur=S.cur,seg='';
  MODS.forEach(function(m){if(m.id==='diag')return;var p=modPct(m.id);seg+='<i class="'+(p==null?'':(p>=70?'on':'half'))+'"></i>';});
  if(cur){var cm=MODS.filter(function(m){return m.id===cur.m;})[0];if(cm)g+='<button class="mod cont" onclick="resumeQuiz()"><span class="n"></span><span class="t">Continuar '+cm.title+'</span><span class="st">Pregunta '+(cur.i+1)+' de '+cm.nq+'</span></button>';}
- MODS.forEach(function(m,i){var p=modPct(m.id);g+='<button class="mod" onclick="openMod('+i+')"><span class="n">'+(i+1)+'</span><span class="t">'+m.title+'</span><span class="st">'+(p==null?'Sin iniciar':(m.id==='diag'?'Hecho':p+' %'))+'</span><span class="pg"><i style="width:'+(p==null?0:(m.id==='diag'?100:p))+'%"></i></span></button>';});
- h('<div class="card hero"><h1>Operación de minicargador</h1><p class="mute">'+EG.esc(f.nombre)+', '+EG.esc(f.sede)+'</p><div class="gauge">'+seg+'</div><div class="eg-who"><span><b>'+EG.esc(EG.reg.nombre)+'</b><br><span class="mute">Avance general '+avance()+' %, '+hechos()+' de '+(MODS.length-1)+' módulos</span></span></div></div>'+
+ MODS.forEach(function(m,i){var p=modPct(m.id),ok=hab(i);g+=(ok?'<button class="mod" onclick="openMod('+i+')">':'<button class="mod lock" disabled>')+'<span class="n">'+(i+1)+'</span><span class="t">'+m.title+'</span><span class="st">'+(!ok?'Se abre en clase':p==null?'Sin iniciar':(m.id==='diag'?'Hecho':p+' %'))+'</span><span class="pg"><i style="width:'+(p==null?0:(m.id==='diag'?100:p))+'%"></i></span></button>';});
+ h('<div class="card hero"><h1>Operación de minicargador</h1><p class="mute">'+EG.esc(f.nombre)+', '+EG.esc(f.sede)+'</p><div class="gauge">'+seg+'</div><div class="eg-who"><span><b>'+EG.esc(EG.reg.nombre)+'</b><br><span class="mute">Avance general '+avance()+' %, '+hechos()+' de '+habN()+' temas habilitados</span></span></div></div>'+
  '<div class="grid">'+g+'</div><div class="row" style="margin-top:14px"><button class="btn sec" onclick="evid()">Mi evidencia</button><button class="btn dark" onclick="retoSetup()">Reto final</button></div>');
 }
 function openMod(i){
+ if(!MODS[i]||!hab(i)){home();return;}
  var m=MODS[i];CUR=m;MODE='explore';setView('mod:'+i);
  var x='<div class="card"><div class="mute">Módulo '+(i+1)+' de '+MODS.length+'</div><h2>'+m.ic+' '+m.title+'</h2><p>'+m.intro+'</p></div>';
  if(m.explorer){
@@ -329,7 +335,7 @@ function endQuiz(){
   if(!r.ok){if(!EG.reg){home();return;}if(/venció|Faltan/.test(r.error)){S.cur=null;save();}falla(r.error,r.red,endQuiz);return;}
   var p=r.p;S.scores[m.id]={p:p,f:new Date().toLocaleDateString('es-CO')};S.cur=null;save();setView('home');
   var i=MODS.indexOf(m),msg=m.id==='diag'?'Diagnóstico registrado. ¡Vamos a trabajar!':p>=90?'Excelente nivel, {op}.':p>=70?'Buen nivel. Repasa lo que fallaste.':'Debes reforzar este tema antes de pasar a la máquina.';
-  h('<div class="card" style="text-align:center"><div class="mute">'+m.ic+' '+m.title+'</div><div class="big">'+p+' %</div><p>'+msg+'</p><p class="mute">Resultado guardado.</p></div><div class="row"><button class="btn sec" onclick="openMod('+i+')">Repetir módulo</button>'+(i<MODS.length-1?'<button class="btn" onclick="openMod('+(i+1)+')">Siguiente módulo</button>':'<button class="btn" onclick="evid()">Ver mi evidencia</button>')+'</div>');
+  h('<div class="card" style="text-align:center"><div class="mute">'+m.ic+' '+m.title+'</div><div class="big">'+p+' %</div><p>'+msg+'</p><p class="mute">Resultado guardado.</p></div><div class="row"><button class="btn sec" onclick="openMod('+i+')">Repetir módulo</button>'+(i<MODS.length-1&&hab(i+1)?'<button class="btn" onclick="openMod('+(i+1)+')">Siguiente módulo</button>':'<button class="btn" onclick="evid()">Ver mi evidencia</button>')+'</div>');
  });
 }
 /* Avance desde el servidor */
@@ -392,7 +398,7 @@ function retoGo(){
  var names=document.getElementById('tm').value.split('\n').map(function(s){return s.trim();}).filter(Boolean).slice(0,8);
  if(names.length<2){alert('Mínimo 2 equipos');return;}
  var b=document.getElementById('rgo');b.disabled=true;b.textContent='Cargando preguntas…';
- EG.api('reto',{app:'minicargador'}).then(function(r){
+ EG.apiS('reto',{app:'minicargador'}).then(function(r){
   b.disabled=false;b.textContent='Iniciar reto';
   if(!r.ok){document.getElementById('rerr').innerHTML='<div class="fb bad"><b>'+esc(r.error)+'</b></div>';return;}
   R.teams=names.map(function(n){return{n:n,p:0};});R.r=0;R.pre=r.preguntas;R.bank=shuf(R.pre.map(function(_,k){return k;}));R.sig=shuf(SENALES);R.qi=0;R.si=0;
