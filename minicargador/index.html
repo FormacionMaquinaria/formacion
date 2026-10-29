@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="Daniel González">
+<meta name="copyright" content="© 2026 Daniel González. Todos los derechos reservados.">
+<!-- © 2026 Daniel González · Todos los derechos reservados. Prohibida su copia, modificación o distribución sin autorización escrita del autor. -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Operación de minicargador</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../engranaje.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8EAED;--card:#fff;--ink:#1F2124;--mute:#5B6068;--line:#CDD1D6;--yel:#FFB800;--yelsoft:#FFF4D1;--dark:#202225;--graf:#34373B;--ok:#2F7D4E;--okbg:#E4F1E9;--bad:#B83A2E;--badbg:#F7E3E0;--metal:#7a7a7a;--metal2:#4a4a4a;--cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#16171A;--card:#202226;--ink:#ECEDEF;--mute:#A3A8B0;--line:#363A40;--yelsoft:#3A3000;--okbg:#12301F;--badbg:#3A1714}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+main{max-width:820px;margin:0 auto;padding:20px 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin:0 0 14px}
+h1,h2,h3{font-family:var(--cond);font-weight:700;letter-spacing:.2px;line-height:1.1}
+h1{font-size:2.3rem;margin:0 0 6px}
+h2{font-size:1.55rem;margin:0 0 10px}
+h3{font-size:1.25rem;margin:0 0 6px}
+p{margin:.35em 0}
+.mute{color:var(--mute);font-size:.95rem}
+.hero{background:var(--graf);color:#fff;border:none;border-radius:10px;position:relative;overflow:hidden;padding:22px 20px 26px}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--yel) 0 12px,#202225 12px 24px)}
+.hero h1 span{color:inherit}
+.hero .mute{color:#C5C9CF}
+input[type=text]{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);font:inherit;background:var(--bg);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:10px 18px;border-radius:8px;border:none;background:var(--yel);color:#1F2124;font-family:var(--cond);font-weight:700;font-size:1.15rem;letter-spacing:.3px;cursor:pointer}
+.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.dark{background:var(--dark);color:#fff}
+.btn.full{width:100%}
+.btn:disabled{opacity:.4}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;min-height:44px;border:none;background:var(--card);color:var(--ink);font:inherit;font-size:.95rem;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--yel);color:#1F2124;font-weight:600}
+.grid{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mod{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:4px 12px;background:transparent;border:none;border-top:1px solid var(--line);padding:14px 16px;cursor:pointer;text-align:left;color:var(--ink);font:inherit}
+.grid .mod:first-child{border-top:none}
+.mod:hover{background:var(--bg)}
+.mod .n{grid-row:span 2;font-family:var(--cond);font-weight:700;font-size:2rem;color:var(--mute);line-height:1}
+.mod .t{font-weight:600;font-size:1.05rem}
+.mod .st{font-size:.85rem;color:var(--mute);text-align:right;white-space:nowrap}
+.mod .pg{grid-column:2 / 4;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.mod .pg i{display:block;height:100%;background:var(--ok)}
+.mod.cont{background:var(--yelsoft)}
+.mod.cont .n{align-self:stretch;width:6px;background:var(--yel);border-radius:3px;justify-self:center}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 16px}
+.bar i{display:block;height:100%;background:var(--yel)}
+.qhead{display:flex;justify-content:space-between;font-size:.9rem;color:var(--mute)}
+.q{font-family:var(--body);font-weight:600;font-size:1.2rem;line-height:1.4;letter-spacing:0}
+.opt{display:block;width:100%;text-align:left;padding:14px 16px;margin:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;min-height:52px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.ok{border:2px solid var(--ok);background:var(--okbg)}
+.opt.bad{border:2px solid var(--bad);background:var(--badbg)}
+.opt.sel{border:2px solid var(--yel);background:var(--yelsoft)}
+.opt:disabled{cursor:default}
+.fb{border-radius:8px;padding:12px 14px;margin:14px 0}
+.fb.ok{background:var(--okbg);border-left:4px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:4px solid var(--bad)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cols .opt{margin:0 0 8px;font-size:.92rem;padding:10px}
+.seq{min-height:52px;border:1px dashed var(--mute);border-radius:8px;padding:6px;margin:8px 0}
+.seq .it{background:var(--yelsoft);border-radius:6px;padding:8px 10px;margin:4px 0;font-size:.95rem}
+.seq .it b{margin-right:6px}
+.cls{border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0}
+.cls .seg button{font-size:.88rem}
+.cls.ok{border-color:var(--ok);background:var(--okbg)}.cls.bad{border-color:var(--bad);background:var(--badbg)}
+.learn{border-left:4px solid var(--yel)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:8px 12px;font:inherit;font-size:.92rem;cursor:pointer}
+.chip.on{background:var(--yel);color:#1F2124;border-color:var(--yel);font-weight:600}
+.info dt{font-weight:600;font-size:.95rem;margin-top:10px}
+.info dd{margin:2px 0 0}
+.info .ok{color:var(--ok)}.info .bad{color:var(--bad)}.info .op{color:#9A6400}
+svg.mach{width:100%;height:auto;display:block;background:var(--bg);border-radius:8px}
+svg.mach .p{cursor:pointer}
+svg.mach .p:hover,svg.mach .p.hl{filter:drop-shadow(0 0 4px #FFB800)}
+svg.mach .p.hl *{stroke:#B83A2E !important;stroke-width:3}
+.big{font-family:var(--cond);font-size:4rem;font-weight:700;text-align:center;margin:4px 0;line-height:1}
+.score{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.score div{flex:1;min-width:110px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+.score div.cur{border:2px solid var(--yel);background:var(--yelsoft)}
+.score b{display:block;font-family:var(--cond);font-size:1.7rem}
+.timer{font-family:var(--cond);font-size:2.2rem;font-weight:700;text-align:center}
+.signal{background:var(--dark);color:var(--yel);text-align:center;font-family:var(--cond);font-size:2.6rem;font-weight:700;padding:34px 10px;border-radius:10px;letter-spacing:1px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+td,th{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-weight:600;color:var(--mute)}
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:16px 0}
+.pod div{width:30%;text-align:center;background:var(--yel);color:#1F2124;border-radius:8px 8px 0 0;padding:8px 4px;font-family:var(--cond);font-weight:700;font-size:1.1rem}
+.gauge{display:flex;gap:4px;margin:14px 0 6px}
+.gauge i{flex:1;height:12px;border-radius:2px;background:#4A4E54}
+.gauge i.on{background:var(--yel)}
+.gauge i.half{background:linear-gradient(90deg,var(--yel) 50%,#4A4E54 50%)}
+footer{max-width:820px;margin:0 auto;padding:0 16px 32px;color:var(--mute);font-size:.82rem}
+@media (min-width:900px){body{font-size:17px}.q{font-size:1.4rem}h1{font-size:2.8rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="eg-head"><div class="in"><a class="eg-logo" href="../" data-logo hidden><img alt="Logo de la institución"></a><span class="eg-tt"><b>Minicargador</b><small data-inst="corta"></small></span><button onclick="home()">Inicio</button></div></header>
+<main id="app"></main>
+<footer>Intervalos, patrones y capacidades son de referencia: siempre prevalece el manual del fabricante de la máquina.<br><small>© 2026 Daniel González · Todos los derechos reservados. Prohibida su copia, modificación o distribución sin autorización escrita del autor.</small></footer>
+<script src="../formaciones.js"></script>
+<script src="../engranaje.js"></script>
+<script>
+/* ---------- Estado ---------- */
+var KEY,S,VIEW='',CUR=null,Q=null,MODE='';
+function loadS(){KEY='pf_op_minicargador_'+(EG.reg?EG.reg.documento:'anon');S={scores:{},ser:{},diagA:[]};try{var d=JSON.parse(localStorage.getItem(KEY));if(d)for(var k in d)S[k]=d[k];}catch(e){}}
+loadS();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+var app=document.getElementById('app');
+function opw(){return EG.op();}
+function T(s){return s.replace(/\{op\}/g,opw()).replace(/\{Op\}/g,opw().charAt(0).toUpperCase()+opw().slice(1)).replace(/\{ops\}/g,EG.ops());}
+function h(x){stopTimer();app.innerHTML=T(x);window.scrollTo(0,0);}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ---------- Componentes ---------- */
+var COMP={
+bucket:{n:'Cucharón',f:'Recoge, transporta y descarga material. La cuchilla y la placa de desgaste protegen el borde.',ok:'Borde recto, sin fisuras, cuchilla y tornillos completos.',ko:'Fisuras en soldaduras, cuchilla gastada, tornillos sueltos o borde torcido.',op:'Inspeccionarlo a diario y reportar fisuras. No usarlo para golpear ni como ariete.'},
+coupler:{n:'Acople rápido',f:'Placa que permite cambiar la herramienta de trabajo en minutos. Se asegura con dos pasadores (manuales o hidráulicos).',ok:'Los dos pasadores salen completos y se ven por debajo de la placa de la herramienta.',ko:'Un pasador no sale completo o la palanca no traba: la herramienta se puede soltar en alto.',op:'Verificar visualmente los pasadores cada vez que acopla una herramienta, antes de levantarla.'},
+tilt:{n:'Cilindros de inclinación',f:'Recogen (curl) y descargan (dump) la herramienta.',ok:'Movimiento suave, vástago limpio y brillante, sin fugas.',ko:'La herramienta se descarga sola, vástago rayado o fuga por el sello.',op:'Mantener el vástago limpio y reportar fugas o deriva (movimiento sin accionar el mando).'},
+arm:{n:'Brazos de elevación',f:'Estructura que sube y baja la herramienta. Trabaja con pivotes y pasadores que se engrasan.',ok:'Sin fisuras, pivotes engrasados, sin juego en los pasadores.',ko:'Juego excesivo, ruidos en pivotes, fisuras en soldaduras o brazos torcidos.',op:'Reportar juego o fisuras. Nunca trabajar debajo de los brazos levantados sin el soporte de brazo instalado.'},
+lift:{n:'Cilindros de elevación',f:'Suben y sostienen los brazos con la carga.',ok:'Los brazos suben parejos y se mantienen en su posición.',ko:'Los brazos bajan solos con el mando en neutro (deriva) o suben lento con el aceite caliente.',op:'Reportar la deriva de inmediato: indica fuga interna en sellos o válvula. Nunca ubicarse debajo.'},
+aux:{n:'Acoples hidráulicos auxiliares',f:'Conexiones rápidas que llevan aceite a herramientas hidráulicas (barredora, martillo, ahoyador).',ok:'Acoples limpios, con tapas y sin goteo.',ko:'Acople que no conecta por presión atrapada, goteo o mangueras rozadas.',op:'Limpiar antes de conectar y aliviar la presión según el manual. Nunca forzar ni golpear el acople.'},
+cab:{n:'Cabina ROPS/FOPS',f:'Protege a la {op} contra volcamiento (ROPS) y caída de objetos (FOPS).',ok:'Estructura sin golpes ni fisuras, vidrios y malla completos.',ko:'Estructura deformada, soldada o perforada: pierde su certificación.',op:'Reportar cualquier daño. Nunca perforar, soldar ni modificar la cabina.'},
+bar:{n:'Barra de seguridad y cinturón',f:'Retienen a la {op} en el asiento y activan los interbloqueos: con la barra arriba se bloquean traslación y brazos y se aplica el freno.',ok:'Con la barra arriba, los mandos no mueven la máquina ni los brazos.',ko:'La máquina o los brazos se mueven con la barra arriba: interbloqueo dañado.',op:'Probar los interbloqueos en el preoperacional. Nunca puentearlos. Si fallan, la máquina no opera.'},
+engine:{n:'Compartimiento del motor',f:'Motor diésel que impulsa las bombas hidráulicas. Incluye filtro de aire, aceite, refrigerante y correas.',ok:'Arranque normal, humo casi invisible trabajando, temperatura en rango.',ko:'Humo negro (filtro de aire tapado o sobrecarga), blanco persistente (refrigerante o mala combustión), azul (quema aceite), alarma de temperatura o de presión de aceite.',op:'Revisar niveles e indicador del filtro de aire a diario. Apagar y reportar si se enciende una alarma de presión de aceite o temperatura.'},
+cooler:{n:'Radiador y enfriador de aceite',f:'Disipan el calor del refrigerante del motor y del aceite hidráulico.',ok:'Panal limpio y temperatura estable durante la jornada.',ko:'La temperatura sube en la tarde o con polvo: panal tapado por tierra, hojas o barro.',op:'Revisar el panal en el preoperacional con el motor apagado y frío. Nunca abrir la tapa del radiador en caliente.'},
+tires:{n:'Neumáticos',f:'Soportan la máquina y dan tracción. En la dirección por deslizamiento se desgastan en cada giro.',ok:'Presión igual en los cuatro, sin cortes, tuercas completas.',ko:'Presiones distintas hacen que la máquina se desvíe. Cortes, desgaste de un lado o tuercas flojas.',op:'Revisar presión y estado a diario. Evitar giros bruscos sobre suelo duro y patinar las ruedas.'},
+chain:{n:'Cajas de cadenas',f:'En cada lado, el motor de traslación mueve las ruedas mediante cadenas que trabajan en baño de aceite.',ok:'Traslación pareja y silenciosa en ambos lados.',ko:'Golpeteo o ruido metálico en un lado, fuga por los ejes, la máquina "jala" hacia un lado.',op:'Reportar ruidos y fugas. El nivel de aceite se revisa según el plan de mantenimiento.'},
+hydro:{n:'Transmisión hidrostática',f:'Dos bombas de pistones (una por lado) envían aceite a los motores de traslación. El mando controla el caudal y el sentido de cada lado.',ok:'Avanza recto con los mandos iguales y responde suave.',ko:'Se desvía, pierde fuerza al calentarse o hace chillido.',op:'Calentar la máquina antes de exigirla y reportar pérdida de potencia o desvío con datos.'},
+hyd:{n:'Sistema hidráulico de implementos',f:'Bomba de engranajes, válvula de control, tanque, filtro y mangueras que mueven brazos, cucharón y auxiliares.',ok:'Nivel en la mirilla, aceite limpio, mangueras sin abultamientos.',ko:'Fugas, mangueras ampolladas o rozadas, aceite espumoso o lechoso, movimientos lentos.',op:'Nunca tocar una fuga con la mano: el aceite a presión puede inyectarse en la piel. Ubicarla con un cartón y reportar.'},
+brake:{n:'Freno de estacionamiento',f:'Frenos aplicados por resorte y liberados con presión hidráulica. Se aplican al levantar la barra, al apagar el motor o con el botón.',ok:'La máquina no se mueve con el freno aplicado, incluso en pendiente.',ko:'La máquina se desplaza con el freno aplicado o el indicador no enciende.',op:'Probar el freno en el preoperacional y reportar cualquier falla.'},
+filter:{n:'Filtro de aire e indicador',f:'Protege el motor del polvo. El indicador de restricción avisa cuando el filtro está tapado.',ok:'Indicador en verde o en cero.',ko:'Indicador en rojo: pérdida de potencia y humo negro.',op:'Revisarlo a diario y con más frecuencia en ambientes polvorientos.'}
+};
+var INTERNOS=['hydro','hyd','brake','filter'];
+
+function machineSVG(){
+ function P(id,inner){return '<g class="p" id="pt_'+id+'" onclick="partTap(\''+id+'\')">'+inner+'</g>';}
+ var s='<svg class="mach" viewBox="0 0 420 250" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="222" x2="410" y2="222" stroke="var(--line)" stroke-width="3"/>';
+ s+=P('chain','<rect x="104" y="166" width="170" height="30" rx="6" fill="#3c3c3c" stroke="#222"/>');
+ s+=P('engine','<rect x="70" y="96" width="78" height="72" rx="6" fill="#f5b800" stroke="#8a6a00"/><rect x="82" y="108" width="50" height="8" fill="#8a6a00"/><rect x="82" y="122" width="50" height="8" fill="#8a6a00"/>');
+ s+=P('cooler','<rect x="58" y="100" width="14" height="64" rx="3" fill="#888" stroke="#333"/><line x1="60" y1="110" x2="70" y2="110" stroke="#333"/><line x1="60" y1="122" x2="70" y2="122" stroke="#333"/><line x1="60" y1="134" x2="70" y2="134" stroke="#333"/><line x1="60" y1="146" x2="70" y2="146" stroke="#333"/>');
+ s+=P('cab','<rect x="150" y="52" width="96" height="116" rx="6" fill="rgba(140,190,230,.35)" stroke="#222" stroke-width="5"/>');
+ s+=P('bar','<rect x="196" y="112" width="44" height="9" rx="3" fill="#d22" stroke="#700"/>');
+ s+=P('lift','<line x1="128" y1="160" x2="182" y2="76" stroke="#555" stroke-width="10" stroke-linecap="round"/><line x1="150" y1="126" x2="182" y2="76" stroke="#ccc" stroke-width="4"/>');
+ s+=P('arm','<polyline points="104,70 252,62 312,150" fill="none" stroke="#e0a800" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/><polyline points="104,70 252,62 312,150" fill="none" stroke="#8a6a00" stroke-width="2"/><circle cx="104" cy="70" r="6" fill="#333"/>');
+ s+=P('tilt','<line x1="262" y1="84" x2="306" y2="132" stroke="#555" stroke-width="9" stroke-linecap="round"/><line x1="286" y1="110" x2="306" y2="132" stroke="#ccc" stroke-width="4"/>');
+ s+=P('aux','<circle cx="286" cy="78" r="6" fill="#1a1a1a" stroke="#f5b800" stroke-width="2"/><circle cx="298" cy="94" r="6" fill="#1a1a1a" stroke="#f5b800" stroke-width="2"/>');
+ s+=P('coupler','<rect x="310" y="132" width="11" height="70" rx="2" fill="#666" stroke="#222"/>');
+ s+=P('bucket','<path d="M321 136 L372 142 L388 206 L321 206 Z" fill="#f5b800" stroke="#222" stroke-width="2"/><line x1="321" y1="206" x2="392" y2="206" stroke="#222" stroke-width="5"/>');
+ s+=P('tires','<circle cx="134" cy="194" r="28" fill="#1e1e1e"/><circle cx="134" cy="194" r="12" fill="#888"/><circle cx="252" cy="194" r="28" fill="#1e1e1e"/><circle cx="252" cy="194" r="12" fill="#888"/>');
+ s+='<text x="400" y="30" text-anchor="end" font-size="12" fill="var(--mute)">Frente</text></svg>';
+ return s;
+}
+function infoHTML(id){var c=COMP[id];return '<div class="card learn info"><h3>'+c.n+'</h3><dl><dt>Función</dt><dd>'+c.f+'</dd><dt class="ok">Comportamiento normal</dt><dd>'+c.ok+'</dd><dt class="bad">Comportamiento en falla</dt><dd>'+c.ko+'</dd><dt class="op">Responsabilidad de la {op}</dt><dd>'+c.op+'</dd></dl></div>';}
+
+/* ---------- Módulos (las preguntas y claves están en el servidor) ---------- */
+var MODS=[{"id":"diag","title":"Diagnóstico de entrada","ic":"","intro":"Cinco preguntas para conocer tu punto de partida. Las dos primeras no tienen respuesta correcta: solo cuéntanos tu experiencia.","nq":5},{"id":"comp","title":"Componentes","ic":"","intro":"Toca cada parte de la máquina para ver su función, cómo se comporta normal, cómo se comporta en falla y qué le corresponde a la {op}.","nq":13,"explorer":true},{"id":"tipos","title":"Tipos de minicargador","ic":"","intro":"Identificar el tipo de equipo te dice qué componentes adicionales tiene y para qué trabajo rinde más.","nq":5,"learn":[{"h":"Elevación vertical","p":"Los brazos tienen eslabones y pivotes adicionales que mantienen la herramienta en una trayectoria casi vertical. Da más alcance a la altura máxima: ideal para cargar volquetas, apilar estibas y trabajar en altura."},{"h":"Elevación radial","p":"El brazo gira sobre un pivote principal y describe un arco. Diseño más simple, menos puntos de engrase, mejor alcance a media altura y más fuerza de arranque al nivel del suelo: excavar, nivelar, cortar terreno y mover material."},{"h":"Ruedas u orugas","p":"Ruedas: más velocidad y menos costo en superficies firmes. Orugas: más flotación y tracción en terreno blando, barro o pendiente. La capacidad nominal se calcula distinto: en ruedas es el 50 % de la carga de vuelco y en orugas se usa el 35 % (consulta la ficha técnica)."}]},{"id":"seg","title":"Seguridad","ic":"","intro":"Antes de mover la máquina, la {op} debe estar en el contexto de la seguridad.","nq":10,"learn":[{"h":"EPP","p":"Casco, botas de seguridad, gafas, protección auditiva, chaleco reflectivo y guantes. El cinturón de la máquina también es EPP."},{"h":"Tres puntos de apoyo","p":"Se sube y se baja de frente a la máquina, por el frente, con la herramienta en el piso, usando escalón y pasamanos. Nunca saltar ni agarrarse de los mandos."},{"h":"Interbloqueos","p":"Barra, sensor de asiento y cinturón. Nunca se puentean. Si fallan, la máquina no opera."},{"h":"Zona de riesgo","p":"Nadie en el radio de acción. Nunca personas debajo de los brazos levantados ni dentro del cucharón."},{"h":"Pendientes","p":"Regla de oro: el extremo pesado siempre hacia arriba. Cargado, el pesado es el cucharón: subir de frente y bajar en reversa. Vacío, el pesado es el motor: subir en reversa y bajar de frente. Nunca girar ni trabajar de lado en la pendiente."},{"h":"Etiquetas","p":"Las etiquetas de seguridad son información del fabricante. Se respetan, se mantienen legibles y se reporta si faltan."}]},{"id":"pre","title":"Preoperacional y plan de mantenimiento","ic":"","intro":"Como ya conoces los componentes, ya sabes qué revisar cada día. El plan de mantenimiento se organiza por horas del horómetro.","nq":6,"learn":[{"h":"El preoperacional","p":"Se hace antes de cada turno, con la máquina en terreno plano, la herramienta en el piso y el motor apagado. Queda registrado y firmado: es la evidencia de que recibiste la máquina en condición segura."},{"h":"El horómetro","p":"Marca las horas de trabajo del motor. Con él se programa cada mantenimiento. La {op} lo registra y avisa cuando se acerca un intervalo."},{"h":"Plan por horas (referencia)","p":"Diario o cada 10 h: niveles, filtro de aire, neumáticos, interbloqueos, freno, fugas. Intervalos mayores (50, 250, 500, 1.000 h): cambios de aceites y filtros, torque de tuercas, cajas de cadenas. Esos los programa y ejecuta mantenimiento. Los intervalos exactos los da el manual del fabricante."}]},{"id":"pat","title":"Patrones de manejo","ic":"","intro":"Los patrones más comerciales son ISO, H y manos y pies. Saber cuál tiene activo la máquina es parte de operar con seguridad.","nq":7,"learn":[{"h":"Patrón ISO","p":"Joystick izquierdo: traslación y giro (adelante, atrás, izquierda, derecha). Joystick derecho: brazos (adelante baja, atrás sube) y cucharón (izquierda recoge, derecha descarga)."},{"h":"Patrón H","p":"Cada joystick controla las ruedas de su lado: adelante y atrás, como palancas. Los movimientos laterales controlan brazos (izquierdo) y cucharón (derecho). La dirección exacta la indica la calcomanía de la cabina."},{"h":"Manos y pies","p":"Las palancas de las manos controlan la traslación de cada lado. Los pedales controlan la herramienta: el izquierdo los brazos y el derecho el cucharón."},{"h":"Selector de patrón","p":"Algunas máquinas ISO permiten pasar a H con los mismos joysticks. El cambio se hace con la máquina detenida y la herramienta en el piso, verificando el indicador en el tablero antes de moverse."},{"h":"Cómo gira","p":"Ambos lados iguales: avanza recto. Un lado más rápido: giro amplio hacia el lado más lento. Un lado adelante y el otro atrás: gira sobre su eje (contrarrotación), con más desgaste de neumáticos."}]},{"id":"tec","title":"Técnicas operativas","ic":"","intro":"La técnica cuida a la {op}, a la máquina y la producción.","nq":8,"learn":[{"h":"Traslación","p":"Herramienta baja, acelerador constante y velocidad modulada con los mandos. Giros amplios y suaves. Es normal que el minicargador gaste neumáticos; una buena {op} controla ese desgaste y no lo aumenta patinando o contrarrotando sobre superficies duras."},{"h":"Ataque al banco","p":"Acercarse a 90° del banco, centrada, con el cucharón nivelado a ras de piso. Penetrar con avance controlado, recoger mientras entra y retroceder recto."},{"h":"Carga descentrada","p":"Si llegas en ángulo y el cucharón se llena de un solo lado, el centro de gravedad se desplaza hacia ese lado. Al subir la carga, la inestabilidad aumenta hacia el lado con exceso de peso y los brazos y cilindros trabajan a torsión."},{"h":"Carga de volqueta","p":"Acercamiento perpendicular y despacio. Subir los brazos cerca del punto de descarga, con la máquina casi detenida, y descargar centrado sin golpear la carrocería. Nunca trasladarse con la carga en alto."},{"h":"Capacidad nominal","p":"Carga de vuelco × 50 % en ruedas. Peso de la carga = densidad del material × volumen del cucharón. Si supera la capacidad nominal, es sobrecarga."}],"cg":true},{"id":"rep","title":"Reporte de fallas","ic":"","intro":"Una {op} profesional no cambia piezas, pero sí da un diagnóstico preciso y se comunica bien con mantenimiento.","nq":4,"learn":[{"h":"Un buen reporte responde","p":"1) Qué pasa: el síntoma, sin adivinar la pieza. 2) Desde cuándo y en qué condición: frío o caliente, con carga o sin carga. 3) Qué indican el tablero y el horómetro. 4) Qué revisaste o hiciste."},{"h":"Lo que NO es un reporte","p":"\"Está mala\", \"suena raro\" o \"cambien la bomba\". El primero no da información; el último es un diagnóstico que confirma mantenimiento con pruebas."}]}];
+
+/* ---------- Inicio ---------- */
+function modPct(id){var r=S.scores[id];return r?r.p:null;}
+function avance(){var t=0,n=0;MODS.forEach(function(m){if(m.id==='diag')return;n++;var p=modPct(m.id);if(p!=null)t+=p;});return Math.round(t/n);}
+function hechos(){var n=0;MODS.forEach(function(m){if(m.id!=='diag'&&modPct(m.id)!=null)n++;});return n;}
+function home(){
+ MODE='';setView('home');
+ var f=EG.formacion();
+ if(!EG.reg||!f){
+  h('<div class="card hero"><h1>Operación de minicargador</h1><p class="mute">Ingresa con tu documento o regístrate para guardar tu avance.</p></div><div class="card">'+EG.formHTML('minicargador','Comenzar')+'</div>');
+  EG.showF();return;
+ }
+ var g='',cur=S.cur,seg='';
+ MODS.forEach(function(m){if(m.id==='diag')return;var p=modPct(m.id);seg+='<i class="'+(p==null?'':(p>=70?'on':'half'))+'"></i>';});
+ if(cur){var cm=MODS.filter(function(m){return m.id===cur.m;})[0];if(cm)g+='<button class="mod cont" onclick="resumeQuiz()"><span class="n"></span><span class="t">Continuar '+cm.title+'</span><span class="st">Pregunta '+(cur.i+1)+' de '+cm.nq+'</span></button>';}
+ MODS.forEach(function(m,i){var p=modPct(m.id);g+='<button class="mod" onclick="openMod('+i+')"><span class="n">'+(i+1)+'</span><span class="t">'+m.title+'</span><span class="st">'+(p==null?'Sin iniciar':(m.id==='diag'?'Hecho':p+' %'))+'</span><span class="pg"><i style="width:'+(p==null?0:(m.id==='diag'?100:p))+'%"></i></span></button>';});
+ h('<div class="card hero"><h1>Operación de minicargador</h1><p class="mute">'+EG.esc(f.nombre)+', '+EG.esc(f.sede)+'</p><div class="gauge">'+seg+'</div><div class="eg-who"><span><b>'+EG.esc(EG.reg.nombre)+'</b><br><span class="mute">Avance general '+avance()+' %, '+hechos()+' de '+(MODS.length-1)+' módulos</span></span></div></div>'+
+ '<div class="grid">'+g+'</div><div class="row" style="margin-top:14px"><button class="btn sec" onclick="evid()">Mi evidencia</button><button class="btn dark" onclick="retoSetup()">Reto final</button></div>');
+}
+function openMod(i){
+ var m=MODS[i];CUR=m;MODE='explore';setView('mod:'+i);
+ var x='<div class="card"><div class="mute">Módulo '+(i+1)+' de '+MODS.length+'</div><h2>'+m.ic+' '+m.title+'</h2><p>'+m.intro+'</p></div>';
+ if(m.explorer){
+  x+='<div class="card">'+machineSVG()+'<p class="mute">Componentes internos:</p><div class="chips">'+INTERNOS.map(function(k){return '<button class="chip" id="ch_'+k+'" onclick="partTap(\''+k+'\')">'+COMP[k].n+'</button>';}).join('')+'</div></div><div id="inf"><div class="card mute">Toca una parte de la máquina.</div></div>';
+ }
+ (m.learn||[]).forEach(function(l){x+='<div class="card learn"><h3>'+l.h+'</h3><p>'+l.p+'</p></div>';});
+ if(m.cg)x+='<div class="card">'+cgSVG()+'<p class="mute">Vista frontal: carga centrada (izquierda) vs. carga descentrada (derecha). La flecha roja es el centro de gravedad.</p></div>';
+ x+='<button class="btn full" onclick="startQuiz()">Practicar</button>';
+ h(x);
+}
+function cgSVG(){
+ function m(ox,shift){return '<g transform="translate('+ox+',0)"><rect x="20" y="70" width="120" height="60" rx="6" fill="#f5b800" stroke="#222"/><rect x="25" y="130" width="22" height="34" rx="4" fill="#222"/><rect x="113" y="130" width="22" height="34" rx="4" fill="#222"/><rect x="10" y="40" width="140" height="22" rx="3" fill="#888" stroke="#222"/>'+(shift?'<path d="M90 40 Q130 6 150 40 Z" fill="#8b5a2b"/>':'<path d="M30 40 Q80 8 130 40 Z" fill="#8b5a2b"/>')+'<line x1="'+(shift?105:80)+'" y1="20" x2="'+(shift?105:80)+'" y2="160" stroke="#d22" stroke-width="3" stroke-dasharray="5 4"/><circle cx="'+(shift?105:80)+'" cy="100" r="6" fill="#d22"/></g>';}
+ return '<svg class="mach" viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">'+m(10,false)+m(190,true)+'<line x1="0" y1="166" x2="360" y2="166" stroke="var(--line)" stroke-width="3"/></svg>';
+}
+function partTap(id){
+ if(MODE==='explore'){
+  document.querySelectorAll('.p.hl,.chip.on').forEach(function(e){e.classList.remove('hl','on');});
+  var e=document.getElementById('pt_'+id)||document.getElementById('ch_'+id);if(e)e.classList.add(e.classList.contains('chip')?'on':'hl');
+  document.getElementById('inf').innerHTML=T(infoHTML(id));
+ }else if(MODE==='quiz'){hotAns(id);}
+}
+
+/* ---------- Práctica (calificada en el servidor) ---------- */
+function spin(t){h('<div class="card mute" style="text-align:center;padding:40px 18px">'+(t||'Cargando…')+'</div>');}
+function falla(msg,red,volver){
+ Q&&(Q.retry=null);
+ h('<div class="card"><div class="fb bad"><b>'+esc(msg)+'</b></div>'+(red&&volver?'<button class="btn full" onclick="FALLA_R()">Reintentar</button>':'')+'<button class="btn sec full" style="margin-top:8px" onclick="home()">Volver al inicio</button></div>');
+ window.FALLA_R=volver;
+}
+function startQuiz(){
+ var m=CUR;spin('Preparando la práctica…');
+ EG.apiS('iniciar',{app:'minicargador',modulo:m.id}).then(function(r){
+  if(!r.ok){if(EG.reg)falla(r.error,r.red,startQuiz);else home();return;}
+  MODE='quiz';Q={m:m,list:r.preguntas,i:0,intento:r.intento};saveQ();renderQ();
+ });
+}
+function saveQ(){S.cur={m:Q.m.id,i:Q.i,intento:Q.intento,list:Q.list};save();setView('quiz');}
+function resumeQuiz(){var c=S.cur,m=MODS.filter(function(x){return x.id===c.m;})[0];if(!m||!c.list||!c.intento){S.cur=null;save();home();return;}CUR=m;MODE='quiz';Q={m:m,list:c.list,i:c.i,intento:c.intento};renderQ();}
+function setView(v){VIEW=v;try{sessionStorage.setItem('pf_vista_mini',v);}catch(e){}}
+function head(q){return '<div class="qhead"><span>'+Q.m.ic+' '+Q.m.title+'</span><span>'+(Q.i+1)+' / '+Q.list.length+'</span></div><div class="bar"><i style="width:'+(Q.i/Q.list.length*100)+'%"></i></div><h2 class="q">'+q.q+'</h2>';}
+function renderQ(){
+ var q=Q.list[Q.i],x=head(q);Q.hd=false;Q.done=false;Q.wait=false;
+ if(q.t==='mc'){x+=q.o.map(function(o,j){return '<button class="opt" id="o'+o.id+'" onclick="mcAns('+j+')">'+o.txt+'</button>';}).join('');}
+ else if(q.t==='hot'){x+=machineSVG()+'<p class="mute">Toca la parte en el dibujo.</p>';}
+ else if(q.t==='match'){Q.ms={sel:null,par:{}};x+='<p class="mute">Toca un elemento de la izquierda y luego su pareja de la derecha. Cuando completes todas las parejas, comprueba.</p><div class="cols"><div id="mL"></div><div id="mR"></div></div><div class="row"><button class="btn sec" id="mUndo" onclick="mReset()">Borrar parejas</button><button class="btn" id="mOk" disabled onclick="mCheck()">Comprobar</button></div>';}
+ else if(q.t==='order'){Q.os={seq:[]};x+='<p class="mute">Toca los pasos en el orden correcto.</p><div class="seq" id="seq"></div><div id="pool"></div><div class="row"><button class="btn sec" onclick="ordUndo()">Deshacer</button><button class="btn" id="ordOk" disabled onclick="ordCheck()">Comprobar</button></div>';}
+ else if(q.t==='cls'){Q.cs={};x+=q.items.map(function(it){return '<div class="cls" id="c'+it.id+'"><div>'+it.txt+'</div><div class="seg" style="margin-top:6px">'+q.cats.map(function(c,j){return '<button id="c'+it.id+'_'+j+'" onclick="clsSet(\''+it.id+'\','+j+')">'+c+'</button>';}).join('')+'</div></div>';}).join('')+'<button class="btn full" id="clsOk" disabled onclick="clsCheck()">Comprobar</button>';}
+ x+='<div id="fb"></div>';
+ h('<div class="card">'+x+'</div>');setView('quiz');
+ if(q.t==='match')drawMatch();if(q.t==='order')drawOrd();
+}
+/* Envía la respuesta al servidor; el servidor califica y devuelve la retroalimentación */
+function enviar(resp,cb){
+ if(Q.wait)return;Q.wait=true;var el=document.getElementById('fb');el.innerHTML='<p class="mute">Calificando…</p>';
+ EG.apiS('responder',{intento:Q.intento,n:Q.i,respuesta:resp}).then(function(r){
+  Q.wait=false;
+  if(r.ok){cb(r);return;}
+  if(/ya fue respondida/.test(r.error)){nextQ();return;}
+  if(!EG.reg){home();return;}
+  if(/venció/.test(r.error)){S.cur=null;save();}
+  Q.retry=function(){enviar(resp,cb);};
+  el.innerHTML='<div class="fb bad"><b>'+esc(r.error)+'</b></div>'+(r.red?'<button class="btn full" onclick="Q.retry()">Reintentar</button>':'<button class="btn full" onclick="openMod(MODS.indexOf(Q.m))">Volver al módulo</button>');
+ });
+}
+function fb(ok,txt,part,e){
+ var msg=ok===null?'Respuesta registrada.':(ok?'Correcto':(part?'Parcial':'Incorrecto'));
+ document.getElementById('fb').innerHTML=T('<div class="fb '+(ok===false?'bad':'ok')+'"><b>'+msg+'</b>'+(txt?'<p>'+txt+'</p>':'')+(e?'<p>'+e+'</p>':'')+'</div><button class="btn full" onclick="nextQ()">'+(Q.i<Q.list.length-1?'Siguiente':'Ver resultado')+'</button>');
+}
+function mcAns(j){
+ var q=Q.list[Q.i],o=q.o[j];if(Q.wait||Q.done)return;Q.done=true;
+ document.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
+ document.getElementById('o'+o.id).classList.add('sel');
+ enviar(o.id,function(r){
+  if(r.correcto===null){S.diagA=(S.diagA||[]).concat([o.txt]).slice(-6);save();fb(null);return;}
+  var b=document.getElementById('o'+o.id);b.classList.remove('sel');
+  var c=document.getElementById('o'+r.clave);if(c)c.classList.add('ok');if(!r.correcto)b.classList.add('bad');
+  fb(r.correcto,r.correcto?'':'La correcta: '+r.claveTxt,false,r.e);
+ });
+}
+function hotAns(id){
+ if(Q.hd||Q.wait)return;Q.hd=true;
+ enviar(id,function(r){
+  var e=document.getElementById('pt_'+r.clave);if(e)e.classList.add('hl');
+  var c=COMP[r.clave]||{n:'',f:''};
+  fb(r.correcto,(r.correcto?'':'Tocaste: '+(COMP[id]?COMP[id].n:'otra parte')+'. ')+'<b>'+c.n+':</b> '+c.f,false,r.e);
+ });
+}
+function drawMatch(){
+ var q=Q.list[Q.i],ms=Q.ms,usadas={},num={},n=0;
+ q.L.forEach(function(l){if(ms.par[l.id]){n++;num[l.id]=n;usadas[ms.par[l.id]]=n;}});
+ document.getElementById('mL').innerHTML=T(q.L.map(function(l){var p=ms.par[l.id];return '<button class="opt '+(ms.sel===l.id?'sel':(p?'ok':''))+'" id="ml'+l.id+'" '+(Q.done?'disabled':'')+' onclick="mL(\''+l.id+'\')">'+(p?'<b>'+num[l.id]+'.</b> ':'')+l.txt+'</button>';}).join(''));
+ document.getElementById('mR').innerHTML=T(q.R.map(function(r){var u=usadas[r.id];return '<button class="opt '+(u?'ok':'')+'" id="mr'+r.id+'" '+(Q.done?'disabled':'')+' onclick="mR(\''+r.id+'\')">'+(u?'<b>'+u+'.</b> ':'')+r.txt+'</button>';}).join(''));
+ var b=document.getElementById('mOk');if(b)b.disabled=Q.done||Object.keys(ms.par).length!==q.L.length;
+}
+function mL(id){if(Q.done)return;Q.ms.sel=id;drawMatch();}
+function mR(id){
+ var ms=Q.ms;if(Q.done||!ms.sel)return;
+ for(var k in ms.par)if(ms.par[k]===id)delete ms.par[k];
+ ms.par[ms.sel]=id;ms.sel=null;drawMatch();
+}
+function mReset(){if(Q.done)return;Q.ms={sel:null,par:{}};drawMatch();}
+function mCheck(){
+ var q=Q.list[Q.i],ms=Q.ms;if(Q.done||Q.wait)return;Q.done=true;drawMatch();document.getElementById('mUndo').disabled=true;
+ var pares=q.L.map(function(l){return [l.id,ms.par[l.id]];});
+ enviar(pares,function(r){
+  var bien={},txt=function(lista,id){return (lista.filter(function(x){return x.id===id;})[0]||{}).txt||'';},det=[];
+  r.clave.forEach(function(p){bien[p[0]]=p[1];});
+  q.L.forEach(function(l){var ok=ms.par[l.id]===bien[l.id],b=document.getElementById('ml'+l.id);if(b){b.classList.remove('ok');b.classList.add(ok?'ok':'bad');}if(!ok)det.push('<b>'+txt(q.L,l.id)+':</b> '+txt(q.R,bien[l.id]));});
+  fb(r.correcto,'Parejas correctas: '+r.aciertos+' de '+r.total+'.'+(det.length?'<br>'+det.join('<br>'):''),r.aciertos>0,r.e);
+ });
+}
+function drawOrd(){
+ var q=Q.list[Q.i],os=Q.os,txt=function(id){return (q.items.filter(function(x){return x.id===id;})[0]||{}).txt;};
+ document.getElementById('seq').innerHTML=T(os.seq.map(function(id,j){return '<div class="it"><b>'+(j+1)+'.</b>'+txt(id)+'</div>';}).join('')||'<span class="mute">Aquí va tu secuencia</span>');
+ document.getElementById('pool').innerHTML=T(q.items.filter(function(it){return os.seq.indexOf(it.id)<0;}).map(function(it){return '<button class="opt" onclick="ordAdd(\''+it.id+'\')">'+it.txt+'</button>';}).join(''));
+ document.getElementById('ordOk').disabled=Q.done||os.seq.length!==q.items.length;
+}
+function ordAdd(id){if(Q.done)return;Q.os.seq.push(id);drawOrd();}
+function ordUndo(){if(Q.done)return;Q.os.seq.pop();drawOrd();}
+function ordCheck(){
+ var q=Q.list[Q.i],os=Q.os;if(Q.done||Q.wait)return;Q.done=true;document.getElementById('ordOk').disabled=true;
+ enviar(os.seq,function(r){
+  var txt=function(id){return (q.items.filter(function(x){return x.id===id;})[0]||{}).txt;};
+  document.getElementById('pool').innerHTML='';
+  document.getElementById('seq').innerHTML=T(os.seq.map(function(id,j){return '<div class="it" style="background:'+(r.clave[j]===id?'var(--okbg)':'var(--badbg)')+'"><b>'+(j+1)+'.</b>'+txt(id)+'</div>';}).join(''));
+  fb(r.correcto,r.correcto?'':'Posiciones correctas: '+r.aciertos+' de '+r.total+'.<br><b>Orden correcto:</b><br>'+r.clave.map(function(id,j){return (j+1)+'. '+txt(id);}).join('<br>'),r.aciertos>0,r.e);
+ });
+}
+function clsSet(id,j){if(Q.done)return;Q.cs[id]=j;var q=Q.list[Q.i];q.cats.forEach(function(_,i){document.getElementById('c'+id+'_'+i).classList.toggle('on',i===j);});document.getElementById('clsOk').disabled=Object.keys(Q.cs).length!==q.items.length;}
+function clsCheck(){
+ var q=Q.list[Q.i];if(Q.done||Q.wait)return;Q.done=true;document.getElementById('clsOk').disabled=true;
+ enviar(Q.cs,function(r){
+  q.items.forEach(function(it){var ok=Q.cs[it.id]===r.clave[it.id],el=document.getElementById('c'+it.id);el.classList.add(ok?'ok':'bad');if(!ok)el.insertAdjacentHTML('beforeend',T('<div class="mute">Correcto: '+q.cats[r.clave[it.id]]+'</div>'));});
+  fb(r.correcto,'Aciertos: '+r.aciertos+' de '+r.total,r.aciertos>0,r.e);
+ });
+}
+function nextQ(){Q.i++;if(Q.i<Q.list.length){saveQ();renderQ();}else endQuiz();}
+function endQuiz(){
+ MODE='';var m=Q.m;spin('Guardando tu resultado…');
+ EG.apiS('finalizar',{intento:Q.intento}).then(function(r){
+  if(!r.ok){if(!EG.reg){home();return;}if(/venció|Faltan/.test(r.error)){S.cur=null;save();}falla(r.error,r.red,endQuiz);return;}
+  var p=r.p;S.scores[m.id]={p:p,f:new Date().toLocaleDateString('es-CO')};S.cur=null;save();setView('home');
+  var i=MODS.indexOf(m),msg=m.id==='diag'?'Diagnóstico registrado. ¡Vamos a trabajar!':p>=90?'Excelente nivel, {op}.':p>=70?'Buen nivel. Repasa lo que fallaste.':'Debes reforzar este tema antes de pasar a la máquina.';
+  h('<div class="card" style="text-align:center"><div class="mute">'+m.ic+' '+m.title+'</div><div class="big">'+p+' %</div><p>'+msg+'</p><p class="mute">Resultado guardado.</p></div><div class="row"><button class="btn sec" onclick="openMod('+i+')">Repetir módulo</button>'+(i<MODS.length-1?'<button class="btn" onclick="openMod('+(i+1)+')">Siguiente módulo</button>':'<button class="btn" onclick="evid()">Ver mi evidencia</button>')+'</div>');
+ });
+}
+/* Avance desde el servidor */
+function refreshAvance(){
+ if(!EG.reg)return;
+ EG.apiS('avance',{app:'minicargador'}).then(function(r){if(r.ok){S.scores=r.notas||{};save();if(VIEW==='home')home();}});
+}
+
+/* ---------- Evidencia ---------- */
+var SERQ=['Aplico las reglas de seguridad aunque nadie me esté supervisando.','Reporto las fallas con datos, sin ocultarlas ni exagerarlas.','Respeto las indicaciones del instructor y el trabajo de mis compañeras y compañeros.','Asumo la responsabilidad por la máquina que me asignan.'];
+var SERO=['Siempre','Casi siempre','A veces','Debo mejorar'];
+function evid(){
+ setView('evid');
+ var rows='',sum=0,n=0;
+ MODS.forEach(function(m){if(m.id==='diag')return;var p=modPct(m.id);if(p!=null){sum+=p;n++;}rows+='<tr><td>'+m.ic+' '+m.title+'</td><td><b>'+(p==null?'—':p+' %')+'</b></td></tr>';});
+  var ser=SERQ.map(function(t,k){return '<div class="cls"><div>'+t+'</div><div class="seg" style="margin-top:6px">'+SERO.map(function(o,j){return '<button class="'+(S.ser[k]===j?'on':'')+'" onclick="serSet('+k+','+j+')">'+o+'</button>';}).join('')+'</div></div>';}).join('');
+ h('<div class="card"><h2>Mi evidencia</h2><p><b>'+esc(EG.reg?EG.reg.nombre:'')+'</b> · Doc. '+esc(EG.reg?EG.reg.documento:'')+'</p><p class="mute">'+esc(EG.formacion()?EG.formacion().sede+' · '+EG.formacion().nombre:'')+'</p><p class="mute">'+new Date().toLocaleDateString('es-CO')+(S.diagA&&S.diagA.length?' · Diagnóstico: '+esc(S.diagA.join(' / ')):'')+'</p><table><tr><th>Módulo</th><th>%</th></tr>'+rows+'</table><p style="margin-top:10px"><b>Promedio: '+(n?Math.round(sum/n)+' %':'—')+'</b> ('+n+' de '+(MODS.length-1)+' módulos)</p></div>'+
+ '<div class="card"><h3>Autoevaluación</h3>'+ser+'<button class="btn sec full" style="margin-top:8px" onclick="serSend()">Guardar autoevaluación</button><div id="serm"></div></div><button class="btn full" onclick="share()">Compartir evidencia</button><div id="shr"></div>');
+}
+function serSet(k,j){S.ser[k]=j;save();evid();}
+function serSend(){
+ var m=document.getElementById('serm');
+ if(SERQ.some(function(_,k){return S.ser[k]==null;})){m.innerHTML='<p class="mute">Responde los cuatro criterios.</p>';return;}
+ m.innerHTML='<p class="mute">Guardando…</p>';
+ EG.apiS('autoevaluacion',{app:'minicargador',valores:SERQ.map(function(_,k){return S.ser[k];})}).then(function(r){m.innerHTML='<p class="mute">'+(r.ok?'Autoevaluación guardada.':esc(r.error))+'</p>';});
+}
+function evText(){
+ var F=EG.formacion()||{};var M=EG.marca()||{};var t='EVIDENCIA · OPERACIÓN DE MINICARGADOR'+(M.sigla?' · '+M.sigla:'')+'\n'+(M.institucion?M.institucion+'\n':'')+'Aprendiz: '+(EG.reg?EG.reg.nombre:'')+'\nDocumento: '+(EG.reg?EG.reg.documento:'')+'\nFormación: '+(F.sede||'')+' · '+(F.nombre||'')+'\nFecha: '+new Date().toLocaleDateString('es-CO')+'\n';
+ MODS.forEach(function(m){if(m.id==='diag')return;var p=modPct(m.id);t+='- '+m.title+': '+(p==null?'pendiente':p+' %')+'\n';});
+ t+='Autoevaluación:\n';SERQ.forEach(function(q,k){t+='- '+q+': '+(S.ser[k]!=null?SERO[S.ser[k]]:'sin responder')+'\n';});
+ return T(t);
+}
+function share(){
+ var t=evText();
+ if(navigator.share){navigator.share({title:'Evidencia Operación de Minicargador',text:t}).catch(function(){});return;}
+ try{navigator.clipboard.writeText(t).then(function(){document.getElementById('shr').innerHTML='<p class="mute">Copiado. Pégalo en WhatsApp o correo.</p>';});}catch(e){}
+ document.getElementById('shr').innerHTML='<textarea style="width:100%;height:180px;margin-top:10px">'+esc(t)+'</textarea>';
+}
+
+/* ---------- Reto final (modo instructor, verificado en el servidor) ---------- */
+var SENALES=['SUBIR BRAZOS','BAJAR BRAZOS','RECOGER CUCHARÓN','DESCARGAR CUCHARÓN','AVANZAR','RETROCEDER','GIRAR A LA IZQUIERDA','GIRAR A LA DERECHA','ALTO','PARADA DE EMERGENCIA','APAGAR MOTOR','DISTANCIA RESTANTE'];
+var R=null,TM=null,KRETO='pf_reto_minicargador2';
+function snapR(){var o={rounds:R.rounds,time:R.time,teams:R.teams.map(function(t){return{n:t.n,p:t.p};}),r:R.r,pre:R.pre,bank:R.bank,sig:R.sig,qi:R.qi,si:R.si};try{localStorage.setItem(KRETO,JSON.stringify(o));}catch(e){} setView('reto');}
+function loadR(){try{var o=JSON.parse(localStorage.getItem(KRETO));if(o&&o.teams&&o.pre){R=o;return true;}}catch(e){}return false;}
+function clearR(){try{localStorage.removeItem(KRETO);}catch(e){}}
+function stopTimer(){if(TM){clearInterval(TM);TM=null;}}
+function retoSetup(){
+ setView('home');var prev=null;try{prev=JSON.parse(localStorage.getItem(KRETO));}catch(e){}
+ var eq='Equipo 1\nEquipo 2\nEquipo 3';try{eq=localStorage.getItem('pf_reto_equipos')||eq;}catch(e){}
+ h((prev&&prev.teams&&prev.pre&&prev.r<prev.rounds?'<div class="card"><b>Hay un reto en curso</b><p class="mute">Ronda '+(prev.r+1)+' de '+prev.rounds+' · '+prev.teams.map(function(t){return esc(t.n)+': '+t.p;}).join(' · ')+'</p><button class="btn full" onclick="loadR();retoRound()">Continuar reto</button></div>':'')+'<div class="card"><h2>Reto de operación</h2><p class="mute">Modo instructor para proyectar. Por turnos, cada equipo responde. Si falla o se acaba el tiempo, hay rebote para el siguiente equipo (+50). Cada cuarta ronda es de señales de mando: una persona hace la señal y otra ejecuta el movimiento simulando los mandos.</p>'+
+ '<label class="mute">Equipos (uno por línea)</label><textarea id="tm" style="width:100%;height:110px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1rem" oninput="try{localStorage.setItem(\'pf_reto_equipos\',this.value)}catch(e){}">'+esc(eq)+'</textarea>'+
+ '<p class="mute">Rondas</p><div class="seg" id="rn"><button onclick="rn(8)">8</button><button class="on" onclick="rn(12)">12</button><button onclick="rn(16)">16</button></div>'+
+ '<p class="mute">Tiempo por pregunta</p><div class="seg" id="tt"><button onclick="tt(0)">Sin tiempo</button><button class="on" onclick="tt(20)">20 s</button><button onclick="tt(30)">30 s</button></div>'+
+ '<div id="rerr"></div><button class="btn full" id="rgo" style="margin-top:14px" onclick="retoGo()">Iniciar reto</button></div>');
+ R={rounds:12,time:20};
+}
+function rn(v){R.rounds=v;document.querySelectorAll('#rn button').forEach(function(b){b.classList.toggle('on',b.textContent==v);});}
+function tt(v){R.time=v;document.querySelectorAll('#tt button').forEach(function(b){b.classList.toggle('on',b.textContent.indexOf(String(v||'Sin'))===0);});}
+function retoGo(){
+ var names=document.getElementById('tm').value.split('\n').map(function(s){return s.trim();}).filter(Boolean).slice(0,8);
+ if(names.length<2){alert('Mínimo 2 equipos');return;}
+ var b=document.getElementById('rgo');b.disabled=true;b.textContent='Cargando preguntas…';
+ EG.api('reto',{app:'minicargador'}).then(function(r){
+  b.disabled=false;b.textContent='Iniciar reto';
+  if(!r.ok){document.getElementById('rerr').innerHTML='<div class="fb bad"><b>'+esc(r.error)+'</b></div>';return;}
+  R.teams=names.map(function(n){return{n:n,p:0};});R.r=0;R.pre=r.preguntas;R.bank=shuf(R.pre.map(function(_,k){return k;}));R.sig=shuf(SENALES);R.qi=0;R.si=0;
+  retoRound();
+ });
+}
+function board(cur){return '<div class="score">'+R.teams.map(function(t,i){return '<div class="'+(i===cur?'cur':'')+'">'+esc(t.n)+'<b>'+t.p+'</b></div>';}).join('')+'</div>';}
+function retoRound(){
+ if(R.r>=R.rounds){clearR();retoEnd();return;}
+ snapR();
+ var cur=R.r%R.teams.length;R.cur=cur;R.phase='main';R.busy=false;
+ var top=board(cur)+'<div class="qhead"><span>Ronda '+(R.r+1)+' / '+R.rounds+'</span><span>Turno: '+esc(R.teams[cur].n)+'</span></div>';
+ if(R.r%4===3){
+  var s=R.sig[R.si++%R.sig.length];
+  h('<div class="card">'+top+'<p class="mute" style="text-align:center">Señales de mando</p><div class="signal">'+s+'</div><p class="mute" style="text-align:center">Una persona hace la señal y otra ejecuta el movimiento simulando los mandos. El instructor valida.</p><div class="row"><button class="btn sec" onclick="sigRes(0)">Incorrecta</button><button class="btn" onclick="sigRes(100)">Correcta, +100</button></div></div>');
+  return;
+ }
+ var q=R.pre[R.bank[R.qi++%R.bank.length]];R.q=q;R.ord=shuf(q.o.map(function(_,k){return k;}));R.tried=[];R.clave=null;R.e='';
+ h('<div class="card">'+top+(R.time?'<div class="timer" id="tmr">'+R.time+'</div>':'')+'<h2 class="q">'+q.q+'</h2>'+R.ord.map(function(k){return '<button class="opt" id="ro'+k+'" onclick="retoAns('+k+')">'+q.o[k].txt+'</button>';}).join('')+'<div id="rfb"></div></div>');
+ startT();
+}
+function startT(){
+ stopTimer();if(!R.time)return;var t=R.time;
+ TM=setInterval(function(){t--;var e=document.getElementById('tmr');if(e)e.textContent=t;if(t<=0){stopTimer();retoMiss(null);}},1000);
+}
+function sigRes(p){R.teams[R.cur].p+=p;R.r++;retoRound();}
+function retoAns(k){
+ var q=R.q;if(R.busy||R.tried.indexOf(k)>=0)return;stopTimer();R.busy=true;
+ document.getElementById('rfb').innerHTML='<p class="mute">Verificando…</p>';
+ EG.api('retoVerificar',{app:'minicargador',ref:q.ref,opcion:k}).then(function(r){
+  R.busy=false;
+  if(!r.ok){document.getElementById('rfb').innerHTML='<div class="fb bad"><b>'+esc(r.error)+'</b></div>';return;}
+  if(r.correcta){R.clave=r.clave;R.e=r.e;var who=R.phase==='main'?R.cur:(R.cur+1)%R.teams.length;R.teams[who].p+=R.phase==='main'?100:50;retoReveal('Correcto para '+R.teams[who].n+' (+'+(R.phase==='main'?100:50)+')',true);}
+  else retoMiss(k);
+ });
+}
+function retoMiss(k){
+ if(k!=null){R.tried.push(k);var b=document.getElementById('ro'+k);b.classList.add('bad');b.disabled=true;}
+ if(R.phase==='main'){R.phase='reb';var nx=R.teams[(R.cur+1)%R.teams.length].n;document.getElementById('rfb').innerHTML='<div class="fb bad"><b>Rebote para '+esc(nx)+' (+50)</b></div><button class="btn sec full" onclick="retoReveal(\'Nadie acertó\',false)">Revelar respuesta</button>';if(R.time)startT();}
+ else retoReveal('Nadie acertó',false);
+}
+function retoReveal(msg,ok){
+ stopTimer();var q=R.q;document.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
+ function pinta(){
+  var c=document.getElementById('ro'+R.clave);if(c)c.classList.add('ok');
+  document.getElementById('rfb').innerHTML=T('<div class="fb '+(ok?'ok':'bad')+'"><b>'+esc(msg)+'</b>'+(R.e?'<p>'+R.e+'</p>':'')+'</div><button class="btn full" onclick="R.r++;retoRound()">Siguiente ronda</button>');
+ }
+ if(R.clave!=null){pinta();return;}
+ document.getElementById('rfb').innerHTML='<p class="mute">Consultando la respuesta…</p>';
+ EG.api('retoVerificar',{app:'minicargador',ref:q.ref,opcion:0,revelar:true}).then(function(r){
+  if(r.ok){R.clave=r.clave;R.e=r.e||'';pinta();}
+  else document.getElementById('rfb').innerHTML='<div class="fb bad"><b>'+esc(r.error)+'</b></div><button class="btn full" onclick="retoReveal(\''+esc(msg).replace(/'/g,'')+'\','+ok+')">Reintentar</button>';
+ });
+}
+function retoEnd(){
+ var t=R.teams.slice().sort(function(a,b){return b.p-a.p;});
+ var pod='<div class="pod">'+(t[1]?'<div style="height:90px">2.<br>'+esc(t[1].n)+'<br>'+t[1].p+'</div>':'')+'<div style="height:130px">1.<br>'+esc(t[0].n)+'<br>'+t[0].p+'</div>'+(t[2]?'<div style="height:70px">3.<br>'+esc(t[2].n)+'<br>'+t[2].p+'</div>':'')+'</div>';
+ h('<div class="card" style="text-align:center"><h2>Resultado del reto</h2>'+pod+'<table>'+t.map(function(x,i){return '<tr><td>'+(i+1)+'.</td><td>'+esc(x.n)+'</td><td><b>'+x.p+'</b></td></tr>';}).join('')+'</table></div><div class="row"><button class="btn sec" onclick="retoSetup()">Nuevo reto</button><button class="btn" onclick="home()">Inicio</button></div>');
+}
+EG.onReady=function(){loadS();EG.aplicarMarca();home();refreshAvance();};
+(function(){var v='';try{v=sessionStorage.getItem('pf_vista_mini')||'';}catch(e){}
+ EG.iniciar();
+ if(EG.reg&&v==='quiz'&&S.cur){resumeQuiz();return;}
+ if(EG.reg&&v.indexOf('mod:')===0){openMod(+v.slice(4));refreshAvance();return;}
+ if(EG.reg&&v==='evid'){evid();refreshAvance();return;}
+ if(v==='reto'&&loadR()){retoRound();return;}
+ home();refreshAvance();})();
+</script>
+</body>
+</html>
