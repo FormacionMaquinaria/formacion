@@ -148,20 +148,42 @@ var INTERNOS=['hydro','hyd','brake','filter'];
 
 function machineSVG(){
  function P(id,inner){return '<g class="p" id="pt_'+id+'" onclick="partTap(\''+id+'\')">'+inner+'</g>';}
- var s='<svg class="mach" viewBox="0 0 420 250" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="222" x2="410" y2="222" stroke="var(--line)" stroke-width="3"/>';
- s+=P('chain','<rect x="104" y="166" width="170" height="30" rx="6" fill="#3c3c3c" stroke="#222"/>');
- s+=P('engine','<rect x="70" y="96" width="78" height="72" rx="6" fill="#f5b800" stroke="#8a6a00"/><rect x="82" y="108" width="50" height="8" fill="#8a6a00"/><rect x="82" y="122" width="50" height="8" fill="#8a6a00"/>');
- s+=P('cooler','<rect x="58" y="100" width="14" height="64" rx="3" fill="#888" stroke="#333"/><line x1="60" y1="110" x2="70" y2="110" stroke="#333"/><line x1="60" y1="122" x2="70" y2="122" stroke="#333"/><line x1="60" y1="134" x2="70" y2="134" stroke="#333"/><line x1="60" y1="146" x2="70" y2="146" stroke="#333"/>');
- s+=P('cab','<rect x="150" y="52" width="96" height="116" rx="6" fill="rgba(140,190,230,.35)" stroke="#222" stroke-width="5"/>');
- s+=P('bar','<rect x="196" y="112" width="44" height="9" rx="3" fill="#d22" stroke="#700"/>');
- s+=P('lift','<line x1="128" y1="160" x2="182" y2="76" stroke="#555" stroke-width="10" stroke-linecap="round"/><line x1="150" y1="126" x2="182" y2="76" stroke="#ccc" stroke-width="4"/>');
- s+=P('arm','<polyline points="104,70 252,62 312,150" fill="none" stroke="#e0a800" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/><polyline points="104,70 252,62 312,150" fill="none" stroke="#8a6a00" stroke-width="2"/><circle cx="104" cy="70" r="6" fill="#333"/>');
- s+=P('tilt','<line x1="262" y1="84" x2="306" y2="132" stroke="#555" stroke-width="9" stroke-linecap="round"/><line x1="286" y1="110" x2="306" y2="132" stroke="#ccc" stroke-width="4"/>');
- s+=P('aux','<circle cx="286" cy="78" r="6" fill="#1a1a1a" stroke="#f5b800" stroke-width="2"/><circle cx="298" cy="94" r="6" fill="#1a1a1a" stroke="#f5b800" stroke-width="2"/>');
- s+=P('coupler','<rect x="310" y="132" width="11" height="70" rx="2" fill="#666" stroke="#222"/>');
- s+=P('bucket','<path d="M321 136 L372 142 L388 206 L321 206 Z" fill="#f5b800" stroke="#222" stroke-width="2"/><line x1="321" y1="206" x2="392" y2="206" stroke="#222" stroke-width="5"/>');
- s+=P('tires','<circle cx="134" cy="194" r="28" fill="#1e1e1e"/><circle cx="134" cy="194" r="12" fill="#888"/><circle cx="252" cy="194" r="28" fill="#1e1e1e"/><circle cx="252" cy="194" r="12" fill="#888"/>');
- s+='<text x="400" y="30" text-anchor="end" font-size="12" fill="var(--mute)">Frente</text></svg>';
+ var K='#262626',Y='#E3AE12',Yd='#B88A0A',G='#3A3D42',M='#8C9096';
+ var s='<svg class="mach" viewBox="0 0 600 330" xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" stroke-linecap="round">';
+ s+='<defs><pattern id="mesh" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M0 0H9M0 0V9" stroke="#202225" stroke-width="1.4" fill="none"/></pattern>'+
+  '<pattern id="slat" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 3H6" stroke="#6b6f75" stroke-width="2"/></pattern></defs>';
+ s+='<line x1="20" y1="301" x2="585" y2="301" stroke="var(--mute)" stroke-width="2"/><path d="M20 306h565" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 6"/>';
+ /* estructura: torre trasera y chasis (no seleccionable) */
+ s+='<path d="M106 262V122L140 60L198 52L216 66V262Z" fill="'+Y+'" stroke="'+K+'" stroke-width="2"/>';
+ s+='<path d="M104 212H404L420 236V262H104Z" fill="'+Y+'" stroke="'+K+'" stroke-width="2"/>';
+ s+='<path d="M392 236h30v10h-30z" fill="'+G+'" stroke="'+K+'"/><path d="M84 248H108V266H84Z" fill="'+G+'" stroke="'+K+'" stroke-width="2"/><path d="M350 204H392V214H350Z" fill="'+G+'" stroke="'+K+'"/>';
+ /* cajas de cadenas */
+ s+=P('chain','<path d="M192 226H334V262H192Z" fill="'+G+'" stroke="'+K+'" stroke-width="2"/><path d="M204 236h118M204 250h118" stroke="#5a5e64" stroke-width="2"/><circle cx="263" cy="244" r="4" fill="'+M+'"/>');
+ /* compartimiento del motor */
+ s+=P('engine','<path d="M110 150H212V256H110Z" fill="'+Yd+'" stroke="'+K+'" stroke-width="2"/><rect x="120" y="160" width="82" height="40" rx="3" fill="#2e3136" stroke="'+K+'"/><path d="M126 168h70M126 176h70M126 184h70M126 192h70" stroke="#55595f" stroke-width="2"/><circle cx="182" cy="226" r="9" fill="'+Y+'" stroke="'+K+'" stroke-width="1.5"/><circle cx="182" cy="226" r="3" fill="'+K+'"/>');
+ /* radiador y enfriador (rejilla trasera) */
+ s+=P('cooler','<path d="M90 112H108V258H90Z" fill="#1f2124" stroke="'+K+'" stroke-width="2"/><rect x="92" y="116" width="14" height="138" fill="url(#slat)"/>');
+ /* cabina ROPS/FOPS */
+ s+=P('cab','<path d="M218 212V74Q218 48 244 48H318Q344 48 344 74L350 212Z" fill="#1d1f22" stroke="'+K+'" stroke-width="2"/><path d="M228 200V78Q228 60 246 60H316Q332 60 334 78L338 200Z" fill="#AEB6BD"/><path d="M258 196V150Q258 134 274 134H290V196Z" fill="#33363b"/><path d="M262 134V96Q262 86 272 86H284Q292 86 292 96V134Z" fill="#33363b"/><path d="M316 150l8-22" stroke="#33363b" stroke-width="5"/><path d="M228 200V78Q228 60 246 60H316Q332 60 334 78L338 200Z" fill="url(#mesh)"/><path d="M228 200V78Q228 60 246 60H316Q332 60 334 78L338 200Z" fill="none" stroke="#000" stroke-width="3"/><circle cx="238" cy="54" r="3.5" fill="#d9d9d9"/><circle cx="330" cy="54" r="3.5" fill="#d9d9d9"/>');
+ /* barra de seguridad */
+ s+=P('bar','<path d="M300 136h42" stroke="#C62828" stroke-width="7"/><circle cx="300" cy="136" r="5" fill="'+K+'"/><path d="M342 136v14" stroke="#C62828" stroke-width="6"/>');
+ /* cilindros de elevación */
+ s+=P('lift','<path d="M200 168L262 98" stroke="'+G+'" stroke-width="11"/><path d="M246 116L282 76" stroke="#c9ccd0" stroke-width="5"/><circle cx="200" cy="168" r="5" fill="'+K+'"/><circle cx="282" cy="76" r="5" fill="'+K+'"/>');
+ /* brazos de elevación radial */
+ s+=P('arm','<path d="M184 66L300 70L364 78Q392 82 404 108L426 196L436 236" fill="none" stroke="'+K+'" stroke-width="20"/><path d="M184 66L300 70L364 78Q392 82 404 108L426 196L436 236" fill="none" stroke="'+Y+'" stroke-width="15"/><path d="M226 69L290 71" stroke="'+Yd+'" stroke-width="3"/><circle cx="184" cy="66" r="7" fill="'+M+'" stroke="'+K+'" stroke-width="2"/><circle cx="436" cy="236" r="5" fill="'+M+'" stroke="'+K+'" stroke-width="2"/>');
+ /* acoples auxiliares */
+ s+=P('aux','<circle cx="398" cy="118" r="5" fill="#1a1a1a" stroke="'+Y+'" stroke-width="2"/><circle cx="404" cy="134" r="5" fill="#1a1a1a" stroke="'+Y+'" stroke-width="2"/><path d="M398 123q-10 14 -2 24" stroke="'+K+'" stroke-width="2.5" fill="none"/>');
+ /* cilindros de inclinación */
+ s+=P('tilt','<path d="M392 96L444 176" stroke="'+G+'" stroke-width="10"/><path d="M424 145L452 190" stroke="#c9ccd0" stroke-width="5"/><circle cx="392" cy="96" r="5" fill="'+K+'"/><circle cx="452" cy="190" r="5" fill="'+K+'"/>');
+ /* acople rápido */
+ s+=P('coupler','<path d="M440 182H458V290H440Z" fill="'+G+'" stroke="'+K+'" stroke-width="2"/><path d="M444 270h10M444 278h10" stroke="#c9ccd0" stroke-width="2.5"/><path d="M449 196v16" stroke="#c9ccd0" stroke-width="3"/>');
+ /* cucharón */
+ s+=P('bucket','<path d="M458 188L520 194Q548 198 556 226L574 294H458Z" fill="#7d7f83" stroke="'+K+'" stroke-width="2"/><path d="M466 200L516 205Q538 208 544 230L558 286" fill="none" stroke="#5c5e62" stroke-width="2"/><path d="M458 294H582" stroke="'+K+'" stroke-width="5"/>');
+ /* neumáticos */
+ function W(cx){return '<circle cx="'+cx+'" cy="254" r="46" fill="#1b1b1b" stroke="'+K+'" stroke-width="2"/><circle cx="'+cx+'" cy="254" r="40" fill="none" stroke="#3a3a3a" stroke-width="5" stroke-dasharray="7 6"/><circle cx="'+cx+'" cy="254" r="26" fill="'+Y+'" stroke="'+K+'" stroke-width="2"/><circle cx="'+cx+'" cy="254" r="9" fill="'+Yd+'" stroke="'+K+'"/>'+[0,60,120,180,240,300].map(function(a){var r=a*Math.PI/180;return '<circle cx="'+(cx+16*Math.cos(r)).toFixed(1)+'" cy="'+(254+16*Math.sin(r)).toFixed(1)+'" r="2" fill="'+K+'"/>';}).join('');}
+ s+=P('tires',W(176)+W(352));
+ s+='<text x="580" y="22" text-anchor="end" font-size="13" fill="var(--mute)" font-family="Barlow,system-ui,sans-serif">Frente →</text>';
+ s+='<text x="20" y="22" font-size="12" fill="var(--mute)" font-family="Barlow,system-ui,sans-serif">Minicargador de elevación radial · vista lateral izquierda</text></svg>';
  return s;
 }
 function infoHTML(id){var c=COMP[id];return '<div class="card learn info"><h3>'+c.n+'</h3><dl><dt>Función</dt><dd>'+c.f+'</dd><dt class="ok">Comportamiento normal</dt><dd>'+c.ok+'</dd><dt class="bad">Comportamiento en falla</dt><dd>'+c.ko+'</dd><dt class="op">Responsabilidad de la {op}</dt><dd>'+c.op+'</dd></dl></div>';}
