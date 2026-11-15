@@ -6,5 +6,10 @@ window.APPS = {
     nombre: 'Operación de minicargador',
     ruta: 'minicargador/',
     desc: 'Componentes, tipos de equipo, seguridad, preoperacional, patrones de manejo, técnicas operativas y reporte de fallas.'
+  },
+  refuerzo: {
+    nombre: 'Material de apoyo: minicargador y cargador frontal',
+    ruta: 'refuerzo/',
+    desc: 'Lectura de refuerzo: normas, lo que comparten las dos máquinas, componentes, seguridad, mandos, técnicas operativas y capacidad.'
   }
 };
