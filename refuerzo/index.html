@@ -61,11 +61,13 @@ footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font-
 <script>
 var V=(location.hash==='#cargador-frontal')?'cf':'mini';
 var ID=V==='cf'?'refuerzo-cargador':'refuerzo-mini',TIT=V==='cf'?'Cargador frontal · refuerzo':'Minicargador · refuerzo',mat=document.getElementById('mat'),av=document.getElementById('aviso');
+var VISTO={};
+function reg(ev,bl){var k=ev+'|'+bl;if(VISTO[k]||!EG.reg)return;VISTO[k]=1;try{EG.apiS('lectura',{material:ID,evento:ev,bloque:bl});}catch(e){}}
 function pinta(){
  EG.aplicarMarca();
  var f=EG.formacion(),ok=false;
  if(EG.reg&&f){try{ok=EG.acceso(f,ID);}catch(e){ok=!!(f.apps&&f.apps.indexOf(ID)>=0);}}
- if(ok){av.hidden=true;mat.hidden=false;return;}
+ if(ok){av.hidden=true;mat.hidden=false;reg('abre','');return;}
  mat.hidden=true;av.hidden=false;
  av.innerHTML=(!EG.reg||!f)?'<h1>Ingresa a tu formación</h1><p class="mute">Para leer este material, ingresa primero con tu documento.</p><a class="go" href="../">Ir al ingreso</a>':'<h1>Material aún no habilitado</h1><p class="mute">Tu instructor habilita este material cuando el grupo llegue al tema.</p><a class="go" href="../">Volver al inicio</a>';
 }
@@ -87,6 +89,7 @@ function pinta(){
  window.addEventListener('hashchange',function(){location.reload();});
 })();
 var d=document.querySelectorAll('details');
+d.forEach(function(x){x.addEventListener('toggle',function(){if(x.open&&!mat.hidden)reg('bloque',x.querySelector('summary').textContent);});});
 document.getElementById('ab').onclick=function(){d.forEach(function(x){x.open=true;});};
 document.getElementById('ce').onclick=function(){d.forEach(function(x){x.open=false;});window.scrollTo(0,0);};
 EG.onReady=pinta;
