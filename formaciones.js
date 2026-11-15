@@ -7,9 +7,14 @@ window.APPS = {
     ruta: 'minicargador/',
     desc: 'Componentes, tipos de equipo, seguridad, preoperacional, patrones de manejo, técnicas operativas y reporte de fallas.'
   },
-  refuerzo: {
-    nombre: 'Material de apoyo: minicargador y cargador frontal',
-    ruta: 'refuerzo/',
-    desc: 'Lectura de refuerzo: normas, lo que comparten las dos máquinas, componentes, seguridad, mandos, técnicas operativas y capacidad.'
+  'refuerzo-mini': {
+    nombre: 'Minicargador · refuerzo',
+    ruta: 'refuerzo/#minicargador',
+    desc: 'Lectura de refuerzo: normas, componentes, tipos, seguridad, patrones de mando, técnicas operativas y capacidad.'
+  },
+  'refuerzo-cargador': {
+    nombre: 'Cargador frontal · refuerzo',
+    ruta: 'refuerzo/#cargador-frontal',
+    desc: 'Lectura de refuerzo: normas, componentes, articulación, seguridad, mandos, cargue en V y capacidad.'
   }
 };
