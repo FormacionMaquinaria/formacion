@@ -42,7 +42,7 @@ footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font-
 <main>
 <div id="aviso" class="card" hidden></div>
 <div id="mat" hidden>
-<div class="card"><h1>Minicargador y cargador frontal</h1><p class="mute">Material de lectura y refuerzo en operación segura.</p></div>
+<div class="card"><h1>Material de refuerzo</h1><p class="mute">Material de lectura y refuerzo en operación segura.</p></div>
 <div class="bar"><button type="button" id="ab">Abrir todo</button><button type="button" id="ce">Cerrar todo</button></div>
 <details open><summary>Cómo usar este material</summary><div class="bd"><p>Aquí está lo esencial de las dos máquinas, en el orden en que se aprende: primero las reglas, luego lo que comparten, después cada máquina y al final la comparación. Léelo antes de clase y vuelve a él después de cada práctica. No reemplaza el manual del fabricante: cuando un dato de este material y el manual de tu máquina no coincidan, manda el manual.</p><p>Cada tema te pide tres cosas: explicarlo con tus palabras, demostrarlo en la máquina y trabajar con la actitud correcta aunque nadie te esté mirando.</p></div></details>
 <details><summary>1. Marco reglamentario</summary><div class="bd"><p>Operar maquinaria no es solo mover palancas. Hay normas que definen cómo te formas y cómo respondes en el trabajo.</p><div class="tw"><table><tr><th>Referencia</th><th>Qué establece</th><th>Qué significa para ti</th></tr><tr><td>Ley 1064 de 2006 y Decreto 1075 de 2015 (educación para el trabajo y el desarrollo humano)</td><td>La formación técnica laboral se hace por competencias y debe dedicar a la práctica al menos la mitad del tiempo.</td><td>No apruebas por asistir: apruebas cuando demuestras, con evidencias, que sabes, haces y actúas como operador.</td></tr><tr><td>Normas de competencia laboral del SENA</td><td>Describen el desempeño esperado. Para minicargador: operar minicargador según el manual del fabricante (NSCL 270101127). Para cargador frontal: operar el cargador de acuerdo con el manual del fabricante y el tipo de labor.</td><td>Son la vara con la que te evalúan aquí y con la que te pueden certificar después.</td></tr><tr><td>Decreto 1072 de 2015 y Resolución 0312 de 2019 (seguridad y salud en el trabajo)</td><td>Toda empresa debe tener un sistema de gestión de seguridad y salud en el trabajo. El trabajador debe cuidar su salud, cumplir las normas, usar el equipo de protección y reportar peligros.</td><td>Reportar una falla o una condición insegura no es opcional ni es «sapear»: es tu obligación legal.</td></tr><tr><td>Manual de operación y mantenimiento del fabricante</td><td>Capacidades, procedimientos, intervalos y advertencias de cada modelo.</td><td>Es la autoridad técnica de la máquina. Debe estar en la cabina y debes haberlo leído.</td></tr><tr><td>Procedimientos de la obra o la empresa</td><td>Plan de tránsito, permisos de trabajo, señalización, formato preoperacional.</td><td>Se cumplen aunque en otra obra se hiciera distinto.</td></tr></table></div></div></details>
@@ -59,7 +59,8 @@ footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font-
 <script src="../formaciones.js"></script>
 <script src="../engranaje.js"></script>
 <script>
-var ID='refuerzo',mat=document.getElementById('mat'),av=document.getElementById('aviso');
+var V=(location.hash==='#cargador-frontal')?'cf':'mini';
+var ID=V==='cf'?'refuerzo-cargador':'refuerzo-mini',TIT=V==='cf'?'Cargador frontal · refuerzo':'Minicargador · refuerzo',mat=document.getElementById('mat'),av=document.getElementById('aviso');
 function pinta(){
  EG.aplicarMarca();
  var f=EG.formacion(),ok=false;
@@ -68,6 +69,20 @@ function pinta(){
  mat.hidden=true;av.hidden=false;
  av.innerHTML=(!EG.reg||!f)?'<h1>Ingresa a tu formación</h1><p class="mute">Para leer este material, ingresa primero con tu documento.</p><a class="go" href="../">Ir al ingreso</a>':'<h1>Material aún no habilitado</h1><p class="mute">Tu instructor habilita este material cuando el grupo llegue al tema.</p><a class="go" href="../">Volver al inicio</a>';
 }
+(function(){
+ document.title=TIT;
+ document.querySelector('#mat h1').textContent=TIT;
+ document.querySelectorAll('details').forEach(function(x){
+  var s=x.querySelector('summary'),t=s.textContent.replace(/^\d+\.\s*/,'');s.textContent=t;
+  if((t==='Minicargador'&&V==='cf')||(t==='Cargador frontal'&&V==='mini')){x.remove();return;}
+  if(t==='Comprueba lo que sabes'){
+   var keep=V==='cf'?[1,2,3,4,7,8,9,10,11,12]:[1,2,3,4,5,6,12];
+   x.querySelectorAll('ol>li').forEach(function(li,i){if(keep.indexOf(i+1)<0)li.remove();});
+   x.querySelectorAll('p').forEach(function(q){if(q.textContent.indexOf('Respuesta de la pregunta 10')===0){if(V==='mini')q.remove();else q.textContent=q.textContent.replace('Respuesta de la pregunta 10','Respuesta del cálculo de capacidad');}});
+  }
+ });
+ window.addEventListener('hashchange',function(){location.reload();});
+})();
 var d=document.querySelectorAll('details');
 document.getElementById('ab').onclick=function(){d.forEach(function(x){x.open=true;});};
 document.getElementById('ce').onclick=function(){d.forEach(function(x){x.open=false;});window.scrollTo(0,0);};
