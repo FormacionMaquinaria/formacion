@@ -26,5 +26,10 @@ window.APPS = {
     nombre: 'Minicargador · criterio operacional',
     ruta: 'taller/#actividad-mini',
     desc: 'Actividades de criterio operacional, aproximación al material, corte y penetración, movimientos simultáneos, fabricantes y caso de obra.'
+  },
+  'eval-mini': {
+    nombre: 'Minicargador · evaluación final',
+    ruta: 'evaluacion/#eval-mini',
+    desc: 'Evaluación final teórica: 40 preguntas, 60 minutos y un solo intento.'
   }
 };
