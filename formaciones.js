@@ -16,5 +16,15 @@ window.APPS = {
     nombre: 'Cargador frontal · refuerzo',
     ruta: 'refuerzo/#cargador-frontal',
     desc: 'Lectura de refuerzo: normas, componentes, articulación, seguridad, mandos, cargue en V y capacidad.'
+  },
+  'taller-mini': {
+    nombre: 'Minicargador · taller integrador',
+    ruta: 'taller/#taller-mini',
+    desc: 'Diez casos de obra para responder con argumentos técnicos: recepción del equipo, patrones, carga, pendientes, diagnóstico, implementos, productividad, seguridad, transmisión y entrega.'
+  },
+  'actividad-mini': {
+    nombre: 'Minicargador · criterio operacional',
+    ruta: 'taller/#actividad-mini',
+    desc: 'Actividades de criterio operacional, aproximación al material, corte y penetración, movimientos simultáneos, fabricantes y caso de obra.'
   }
 };
