@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="Daniel González">
+<meta name="copyright" content="© 2026 Daniel González. Todos los derechos reservados.">
+<!-- © 2026 Daniel González · Todos los derechos reservados. Prohibida su copia, modificación o distribución sin autorización escrita del autor. -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evaluación final</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../engranaje.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>:root{--bg:#E8EAED;--card:#fff;--ink:#1F2124;--mute:#5B6068;--line:#CDD1D6;--yel:#FFB800;--soft:#FFF4D1;--ok:#2E7D4F;--bad:#B83A2E;--cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#16171A;--card:#202226;--ink:#ECEDEF;--mute:#A3A8B0;--line:#363A40;--soft:#3A3000;--ok:#6CC08F;--bad:#E57368}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-user-select:none;user-select:none}
+main{max-width:760px;margin:0 auto;padding:16px 12px 30px}
+h1{font-family:var(--cond);font-size:1.6rem;line-height:1.15;margin:0 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 12px}
+.mute{color:var(--mute)}
+ul{margin:8px 0;padding-left:22px}
+.btn{display:block;width:100%;font:inherit;font-weight:600;padding:13px;border:none;border-radius:10px;background:var(--yel);color:#1F2124;text-align:center;text-decoration:none;cursor:pointer;margin-top:12px}
+.btn.sec{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn[disabled]{opacity:.55;cursor:default}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0 10px;display:flex;align-items:center;gap:10px}
+.reloj{font-family:var(--cond);font-size:1.5rem;font-weight:700;min-width:84px}
+.reloj.poco{color:var(--bad)}
+.prog{flex:1;height:8px;background:var(--line);border-radius:6px;overflow:hidden}.prog i{display:block;height:100%;background:var(--yel)}
+.num{font-size:.9rem;color:var(--mute);white-space:nowrap}
+.enun{font-size:1.08rem;font-weight:600;margin:4px 0 14px}
+.op{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:12px 14px;margin:0 0 10px;cursor:pointer}
+.op.sel{border-color:var(--yel);background:var(--soft);font-weight:600}
+.nav{display:flex;gap:10px}.nav .btn{margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin-top:10px}
+.grid button{font:inherit;font-size:.9rem;padding:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.grid button.r{background:var(--yel);border-color:var(--yel);color:#1F2124;font-weight:600}
+.grid button.act{outline:2px solid var(--ink)}
+.est{font-size:.85rem;min-height:1.3em;margin-top:6px;color:var(--mute)}.est.bad{color:var(--bad)}
+.res{font-family:var(--cond);font-size:3rem;font-weight:700;line-height:1}
+.ok{color:var(--ok)}.no{color:var(--bad)}
+table{width:100%;border-collapse:collapse;margin-top:10px}td{padding:6px 4px;border-bottom:1px solid var(--line)}td:last-child{text-align:right;font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal .card{max-width:420px;width:100%}
+footer{max-width:760px;margin:0 auto;padding:0 16px 30px;color:var(--mute);font-size:.85rem;text-align:center}</style>
+</head>
+<body>
+<header class="eg-head"><div class="in"><a class="eg-logo" href="../" data-logo hidden><img alt="Logo de la institución"></a><span class="eg-tt"><b id="tt">Evaluación final</b><small data-inst="corta"></small></span><button id="bInicio" onclick="location.href='../'">Inicio</button></div></header>
+<main id="app"><div class="card"><p class="mute">Cargando…</p></div></main>
+<div id="modal" class="modal" hidden></div>
+<footer>Evaluación individual. Tus respuestas quedan registradas con tu nombre, la hora y el grupo.<br><small>© 2026 Daniel González · Todos los derechos reservados. Prohibida su copia, modificación o distribución sin autorización escrita del autor.</small></footer>
+<script src="../formaciones.js"></script>
+<script src="../engranaje.js"></script>
+<script>
+var EX=(location.hash||'#eval-mini').slice(1).replace(/[^a-z0-9\-]/g,'')||'eval-mini';
+var app=document.getElementById('app'),modal=document.getElementById('modal');
+var X=null,P=null,R={},I=0,FIN=0,TMR=null,PEND={},CERRANDO=false;
+function esc(s){return EG.esc(s);}
+function caja(h){app.innerHTML='<div class="card">'+h+'</div>';}
+function mm(s){s=Math.max(0,s);var m=Math.floor(s/60),x=s%60;return m+':'+(x<10?'0':'')+x;}
+function nombreApp(){var a=window.APPS&&window.APPS[EX];return a?a.nombre:'Evaluación final';}
+
+function inicio(){
+ EG.aplicarMarca();document.getElementById('tt').textContent=nombreApp();document.title=nombreApp();
+ var f=EG.formacion();
+ if(!EG.reg||!f){caja('<h1>Ingresa a tu formación</h1><p class="mute">Para presentar la evaluación, ingresa primero con tu documento.</p><a class="btn" href="../">Ir al ingreso</a>');return;}
+ if(!EG.acceso(f,EX)){caja('<h1>Evaluación aún no habilitada</h1><p class="mute">Tu instructor la abre el día de la prueba.</p><a class="btn" href="../">Volver al inicio</a>');return;}
+ caja('<p class="mute">Consultando tu evaluación…</p>');
+ EG.apiS('efEstado',{examen:EX}).then(function(r){
+  if(!r.ok){caja('<h1>No se pudo abrir</h1><p class="mute">'+esc(r.error)+'</p><button class="btn" onclick="inicio()">Intentar de nuevo</button>');return;}
+  X=r;
+  if(r.presentada){resultado(r.presentada);return;}
+  if(r.bloqueada){caja('<h1>Evaluación sin terminar</h1><p class="mute">Tu intento quedó abierto. Habla con tu instructor.</p>');return;}
+  if(r.enCurso){empezar();return;}
+  caja('<h1>'+esc(r.titulo)+'</h1><p><b>'+esc(EG.reg.nombre)+'</b></p><ul><li>'+r.n+' preguntas de selección con una sola respuesta correcta.</li><li>Tienes '+r.minutos+' minutos. El tiempo corre desde que tocas Empezar, aunque cierres la página.</li><li>Un solo intento. Puedes cambiar una respuesta mientras no termines.</li><li>Lee todas las opciones: varias parecen correctas, pero solo una lo es por completo.</li><li>Si se acaba el tiempo, se califica lo que hayas respondido.</li><li>Aprueba con '+r.aprueba+' % o más.</li></ul><button class="btn" onclick="confirmar(\'¿Empezar la evaluación?\',\'El tiempo empezará a correr y no se puede pausar.\',\'Empezar\',empezar)">Empezar</button>');
+ });
+}
+
+function empezar(){
+ cerrarModal();caja('<p class="mute">Preparando tus preguntas…</p>');
+ EG.apiS('efIniciar',{examen:EX}).then(function(r){
+  if(!r.ok){caja('<h1>No se pudo iniciar</h1><p class="mute">'+esc(r.error)+'</p><button class="btn" onclick="inicio()">Volver</button>');return;}
+  if(r.presentada){resultado(r.presentada);return;}
+  P=r;R={};Object.keys(r.respuestas||{}).forEach(function(k){R[k]=r.respuestas[k];});
+  FIN=Date.now()+r.restante*1000;I=0;document.getElementById('bInicio').hidden=true;
+  for(var k=0;k<P.preguntas.length;k++){if(!R[k]){I=k;break;}}
+  pinta();clearInterval(TMR);TMR=setInterval(tic,1000);tic();
+ });
+}
+
+function tic(){
+ var s=Math.round((FIN-Date.now())/1000),el=document.getElementById('reloj');
+ if(el){el.textContent=mm(s);el.className='reloj'+(s<=300?' poco':'');}
+ if(s<=0){clearInterval(TMR);terminar(true);}
+}
+
+function pinta(){
+ var q=P.preguntas[I],N=P.preguntas.length,n=Object.keys(R).length,h='';
+ h+='<div class="bar"><span class="reloj" id="reloj">'+mm(Math.round((FIN-Date.now())/1000))+'</span><div class="prog"><i style="width:'+Math.round(n*100/N)+'%"></i></div><span class="num">'+n+' de '+N+'</span></div>';
+ h+='<div class="card"><div class="num">Pregunta '+(I+1)+' de '+N+'</div><div class="enun">'+esc(q.q)+'</div>';
+ q.o.forEach(function(o){h+='<button class="op'+(R[I]===o.id?' sel':'')+'" onclick="elegir(\''+o.id+'\')">'+esc(o.txt)+'</button>';});
+ h+='<div class="est" id="est">'+(PEND[I]?'Guardando…':(R[I]?'Respuesta guardada':''))+'</div>';
+ h+='<div class="nav"><button class="btn sec" '+(I===0?'disabled':'')+' onclick="ir('+(I-1)+')">Anterior</button><button class="btn sec" '+(I===N-1?'disabled':'')+' onclick="ir('+(I+1)+')">Siguiente</button></div></div>';
+ h+='<div class="card"><b>Preguntas</b><div class="grid">';
+ for(var k=0;k<N;k++)h+='<button class="'+(R[k]?'r':'')+(k===I?' act':'')+'" onclick="ir('+k+')">'+(k+1)+'</button>';
+ h+='</div><button class="btn" onclick="pedirFin()">Terminar evaluación</button></div>';
+ app.innerHTML=h;
+}
+function ir(k){if(k<0||k>=P.preguntas.length)return;I=k;pinta();window.scrollTo(0,0);}
+
+function elegir(id){
+ var n=I;R[n]=id;PEND[n]=id;pinta();enviar(n);
+ if(n<P.preguntas.length-1)setTimeout(function(){if(I===n)ir(n+1);},350);
+}
+function enviar(n){
+ var id=PEND[n];if(!id)return;
+ EG.apiS('efResponder',{examen:EX,intento:P.intento,n:n,opcion:id}).then(function(r){
+  if(PEND[n]!==id)return;
+  if(r.ok){delete PEND[n];}else if(!r.red){delete PEND[n];aviso(r.error);}else{setTimeout(function(){enviar(n);},3000);}
+  if(I===n){var e=document.getElementById('est');if(e){e.className='est'+(PEND[n]?' bad':'');e.textContent=PEND[n]?'Sin conexión: reintentando…':'Respuesta guardada';}}
+ });
+}
+function aviso(t){var e=document.getElementById('est');if(e){e.className='est bad';e.textContent=t;}}
+
+function pedirFin(){
+ var f=P.preguntas.length-Object.keys(R).length;
+ confirmar('¿Terminar la evaluación?',f?'Te faltan '+f+' preguntas por responder. Las que no respondas cuentan como incorrectas.':'Respondiste todas las preguntas. Después de terminar no podrás cambiar respuestas.','Terminar',function(){terminar(false);});
+}
+function terminar(porTiempo){
+ if(CERRANDO)return;CERRANDO=true;cerrarModal();clearInterval(TMR);
+ caja('<p class="mute">'+(porTiempo?'Se acabó el tiempo. ':'')+'Calificando…</p>');
+ var esperar=function(t){
+  if(Object.keys(PEND).length&&t<10){Object.keys(PEND).forEach(enviar);setTimeout(function(){esperar(t+1);},1500);return;}
+  EG.apiS('efFinalizar',{examen:EX,intento:P.intento}).then(function(r){
+   CERRANDO=false;
+   if(!r.ok){caja('<h1>No se pudo terminar</h1><p class="mute">'+esc(r.error)+'</p><button class="btn" onclick="terminar('+porTiempo+')">Intentar de nuevo</button>');return;}
+   resultado(r.presentada);
+  });
+ };
+ esperar(0);
+}
+
+function resultado(p){
+ document.getElementById('bInicio').hidden=false;
+ var ok=p.resultado==='Aprobado',ra=p.ra||{},t='';
+ [['RA1','Componentes, sistemas y tipos'],['RA2','Seguridad, preoperacional y mantenimiento'],['RA3','Señales y mandos'],['RA4','Técnicas operativas y reporte']].forEach(function(x){if(ra[x[0]]!==''&&ra[x[0]]!=null)t+='<tr><td>'+x[1]+'</td><td>'+ra[x[0]]+' %</td></tr>';});
+ caja('<h1>'+esc((X&&X.titulo)||nombreApp())+'</h1><p class="mute">Presentada el '+esc(p.fecha)+(p.estado==='Tiempo agotado'?' · se acabó el tiempo':'')+'</p><div class="res '+(ok?'ok':'no')+'">'+p.p+' %</div><p><b>Nota '+String(p.nota).replace('.',',')+'</b> · '+p.correctas+' de '+p.n+' correctas · <b class="'+(ok?'ok':'no')+'">'+esc(p.resultado)+'</b></p><p class="mute">Detalle por resultado de aprendizaje:</p><table>'+t+'</table><p class="mute">Tu instructor revisa contigo las preguntas en la retroalimentación.</p><a class="btn" href="../">Volver al inicio</a>');
+}
+
+function confirmar(t,d,b,fn){
+ modal.innerHTML='<div class="card"><h1>'+esc(t)+'</h1><p class="mute">'+esc(d)+'</p><div class="nav"><button class="btn sec" onclick="cerrarModal()">Cancelar</button><button class="btn" id="mOk">'+esc(b)+'</button></div></div>';
+ modal.hidden=false;document.getElementById('mOk').onclick=fn;
+}
+function cerrarModal(){modal.hidden=true;modal.innerHTML='';}
+window.addEventListener('beforeunload',function(e){if(P&&!CERRANDO&&Object.keys(PEND).length){e.preventDefault();e.returnValue='';}});
+document.addEventListener('contextmenu',function(e){if(P)e.preventDefault();});
+EG.onReady=inicio;
+EG.iniciar();
+inicio();
+</script>
+</body>
+</html>
